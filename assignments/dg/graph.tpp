@@ -108,7 +108,6 @@ bool gdwg::Graph<N, E>::InsertEdge(const N& src, const N& dst, const E& w) {
     std::shared_ptr<Edge> edge = std::make_shared<Edge>(node_graph_[src], node_graph_[dst], w);
     node_graph_[src]->out_edges_.insert(edge);
     node_graph_[dst]->in_edges_.insert(edge);
-    edge_total_++;
     return true;
 }
 
@@ -118,7 +117,6 @@ bool gdwg::Graph<N, E>::InsertEdge(const N& src, const N& dst, const E& w) {
 template <typename N, typename E>
 void gdwg::Graph<N, E>::Clear() {
     node_graph_.clear();
-    edge_total_ = 0;
 }
 
 
