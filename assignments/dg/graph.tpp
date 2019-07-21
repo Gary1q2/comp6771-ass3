@@ -1,4 +1,9 @@
 
+/* Default constructor
+ */
+template <typename N, typename E>
+gdwg::Graph<N, E>::Graph() {}
+
 
 /* Constructor that takes in a vector of nodes
  */
@@ -20,13 +25,14 @@ gdwg::Graph<N, E>::Graph(typename std::vector<std::tuple<N, N, E>>::const_iterat
                          typename std::vector<std::tuple<N, N, E>>::const_iterator end) {
     
     // Iterate through vector and create new nodes if they don't exist, and then add the edges
-    for (auto const ite = start; ite != end; ite++) {
+    for (auto ite = start; ite != end; ite++) {
         if (IsNode(std::get<0>(*ite)) == false) {
             InsertNode(std::get<0>(*ite));
         }
         if (IsNode(std::get<1>(*ite)) == false) {
             InsertNode(std::get<1>(*ite));
         }
+        // Insert the edge between the two nodes
         InsertEdge(std::get<0>(*ite), std::get<1>(*ite), std::get<2>(*ite));
     }
 }
@@ -45,9 +51,16 @@ gdwg::Graph<N, E>::Graph(std::initializer_list<N> list) {
 }
 
 
-/* Copy constructor
- */
-//gdwg::Graph<N, E>::Graph(const Graph<N, E>& graph): node_graph_{graph.node_graph_} {}
+
+
+
+
+
+
+
+//========================================================================
+// Operations
+//========================================================================
 
 
 
@@ -56,18 +69,20 @@ gdwg::Graph<N, E>::Graph(std::initializer_list<N> list) {
 
 
 
-
-
-
-
+//========================================================================
+// Methods
+//========================================================================
 
 /* Inserts a new node into the graph if it doesn't already exist
  */
 template <typename N, typename E>
 bool gdwg::Graph<N, E>::InsertNode(const N& val) {
+    // Check if node with same value already exists
     if (IsNode(val)) {
       return false;
     }
+    
+    // Create new node and insert into graph
     node_graph_.insert({val, std::make_shared<Node>(val)});
     return true;
 }
@@ -75,10 +90,36 @@ bool gdwg::Graph<N, E>::InsertNode(const N& val) {
 
 /* Inserts an edge between two nodes in the graph
  */
-//template <typename N, typename E>
-//bool InsertEdge(const N& src, const N& dst, const E& w) {
-    //
-//}
+template <typename N, typename E>
+bool gdwg::Graph<N, E>::InsertEdge(const N& src, const N& dst, const E& w) {
+    
+    // Throw exception if source or destination node don't exist
+    if (!IsNode(src) || !IsNode(dst)) {
+        throw std::runtime_error("Cannot call Graph::InsertEdge when either src or dst node does not exist");
+    }
+    
+    // Check if edge already exists
+    std::shared_ptr<Edge> existing_edge = node_graph_[src]->GetEdgeDst(dst, w);
+    if (existing_edge != nullptr) {
+        return false;
+    }
+    
+    // Create and insert edge into graph
+    std::shared_ptr<Edge> edge = std::make_shared<Edge>(node_graph_[src], node_graph_[dst], w);
+    node_graph_[src]->out_edges_.insert(edge);
+    node_graph_[dst]->in_edges_.insert(edge);
+    edge_total_++;
+    return true;
+}
+
+
+/* Removes all nodes and edges from the graph
+ */
+template <typename N, typename E>
+void gdwg::Graph<N, E>::Clear() {
+    node_graph_.clear();
+    edge_total_ = 0;
+}
 
 
 /* Checks if a node with the same value already exists in the graph or not

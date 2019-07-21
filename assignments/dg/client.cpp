@@ -3,24 +3,13 @@
 
 #include "assignments/dg/graph.h"
 
-
 // hello i am testing too - gary
 
 // Note: At the moment, there is no client.sampleout. Please do your own testing
 // Carter test 1
 int main() {
     
-    // Random temporary testing to make sure it works, we will test later anyways
-    gdwg::Graph<std::string, int> g;
-    g.InsertNode("hello");
-    g.InsertNode("how");
-    g.InsertNode("are");
-    g.InsertNode("you?");
-    
-    
-    //std::vector<std::string> vec = {"bye", "nerd", "hehe", "fuck"};
-    //gdwg::Graph<std::string, int> h{vec.begin(), vec.end()};
-    /*
+  /*
   gdwg::Graph<std::string, int> g;
   g.InsertNode("hello");
   g.InsertNode("how");
