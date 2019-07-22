@@ -1,10 +1,3 @@
-
-/* Default constructor
- */
-template <typename N, typename E>
-gdwg::Graph<N, E>::Graph() {}
-
-
 /* Constructor that takes in a vector of nodes
  */
 template <typename N, typename E>

@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <iostream>
 #include <memory>
-#include <set>
+#include <unordered_set>
 #include <vector>
 #include <unordered_map>
 
@@ -22,7 +22,7 @@ class Graph {
   //============================================================
   
   // Default constructor
-  Graph();
+  Graph() = default;
   
   // Constructor taking in iterators of a vector
   Graph(typename std::vector<N>::const_iterator start, typename std::vector<N>::const_iterator end);
@@ -77,26 +77,78 @@ class Graph {
   friend bool operator==(const gdwg::Graph<N, E>& graph1, const gdwg::Graph<N, E>& graph2) {
       
       // Check if maps are the same size
-      if (graph1.node_graph_ != graph2.node_graph_) {
+      if (graph1.node_graph_.size() != graph2.node_graph_.size()) {
           return false;
       }
     
-      // Check if each node is the same
-      for (const auto& node : graph1.node_graph_) {
-          if (node.second != graph2[node.first]) {
-              return false;
-          }
-    
-          // Check if each node's inward edges are the same
-          if (node->in_edges_ != graph2[node.first]) {
+      // Iterate through graph1's nodes and compare their name values with graph2's nodes
+      for (auto g1_node_ite = graph1.node_graph_.cbegin(); g1_node_ite != graph1.node_graph_.cend(); g1_node_ite++) {
+          
+          // Try and find a node in graph2 with the same name value
+          auto g2_node_ite = graph2.node_graph_.find(g1_node_ite->first);
+          
+          // Same node didn't exist in graph2, so return false
+          if (g2_node_ite == graph2.node_graph_.end()) {
               return false;
           }
           
-          // Check if each node's inward edges are the same
-          if (node->out_edges_ != graph2[node.first]) {
+          // Iterate through the edges in the node of graph1 and compare it with the node of graph2
+          auto g1_node = g1_node_ite->second;
+          auto g2_node = g2_node_ite->second;
+          
+          // Check if the node's inward edge array has the same size
+          if (g1_node->in_edges_.size() != g2_node->in_edges_.size()) {
               return false;
           }
           
+          // Check if the node's outward edge array has the same size
+          if (g1_node->out_edges_.size() != g2_node->out_edges_.size()) {
+              return false;
+          }
+          
+          // Check if all the inward edge's within node1 and node2 have the same values
+          for (auto g1_edge_ite = g1_node->in_edges_.cbegin(); g1_edge_ite != g1_node->in_edges_.cend(); g1_edge_ite++) {
+              bool found = false;
+              auto edge1 = *g1_edge_ite;
+
+              // Search within node2 for an edge that matches node1 (edge might not be in the same order in the set)
+              for (auto g2_edge_ite = g2_node->in_edges_.cbegin(); g2_edge_ite != g2_node->in_edges_.cend(); g2_edge_ite++) {
+                  auto edge2 = *g2_edge_ite;
+                  if ((edge1->GetSrcValue() == edge2->GetSrcValue()) &&
+                      (edge1->GetDstValue() == edge2->GetDstValue()) &&
+                      (edge1->weight_ == edge2->weight_)) {
+                      found = true;
+                      break;
+                  }
+              }
+              
+              // An edge in node1 was not found in node2 so return false
+              if (!found) {;
+                  return false;
+              }
+          }
+          
+          // Check if all the outward edge's within node1 and node2 have the same values
+          for (auto g1_edge_ite = g1_node->out_edges_.cbegin(); g1_edge_ite != g1_node->out_edges_.cend(); g1_edge_ite++) {
+              bool found = false;
+              auto edge1 = *g1_edge_ite;
+        
+              // Search within node2 for an edge that matches node1 (edge might not be in the same order in the set)
+              for (auto g2_edge_ite = g2_node->out_edges_.cbegin(); g2_edge_ite != g2_node->out_edges_.cend(); g2_edge_ite++) {
+                  auto edge2 = *g2_edge_ite;
+                  if ((edge1->GetSrcValue() == edge2->GetSrcValue()) &&
+                      (edge1->GetDstValue() == edge2->GetDstValue()) &&
+                      (edge1->weight_ == edge2->weight_)) {
+                      found = true;
+                      break;
+                  }
+              }
+        
+              // An edge in node1 was not found in node2 so return false
+              if (!found) {
+                  return false;
+              }
+          }
       }
       return true;
   }
@@ -123,9 +175,9 @@ class Graph {
     }
     
     // Variables
-    N value_;                                // Value of the node
-    std::set<shared_ptr<Edge>> in_edges_;    // Edges that go into this node
-    std::set<shared_ptr<Edge>> out_edges_;   // Edges that go AWAY from this node
+    N value_;                                          // Value of the node
+    std::unordered_set<shared_ptr<Edge>> in_edges_;    // Edges that go into this node
+    std::unordered_set<shared_ptr<Edge>> out_edges_;   // Edges that go AWAY from this node
     
     
   };
@@ -136,6 +188,18 @@ class Graph {
     
     // Edge constructor
     Edge(shared_ptr<Node> src, shared_ptr<Node> dst, const E& w): src_{src}, dst_{dst}, weight_{w} {}
+    
+    // Return the source node's value
+    N GetSrcValue() const {
+        std::shared_ptr p = src_.lock();
+        return p->value_;
+    }
+  
+    // Return the destination node's value
+    N GetDstValue() const {
+        std::shared_ptr p = dst_.lock();
+        return p->value_;
+    }
     
     // Variables
     weak_ptr<Node> src_;  // Node which the edge is coming from
