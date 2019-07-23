@@ -2,7 +2,7 @@
 #include <string>
 
 // Change this back to absolute path, only for IDE
-//#include "assignments/dg/graph.h"
+#include "assignments/dg/graph.h"
 #include "graph.h"
 
 // hello i am testing too - gary
@@ -26,8 +26,9 @@ int main() {
   if (g == h) {
     std::cout << "they are equal\n";
   } else {
-    std::cout << "they arent equal\n";
+      std::cout << "they arent equal\n";
   }
+  
 
   /*
   g.InsertNode("are");
