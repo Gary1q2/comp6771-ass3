@@ -1,19 +1,21 @@
 /*
 
   == Explanation and rational of testing ==
-  
+
    For each constructor, operation and method we thought of all
    the possible edge cases and wrote edge case tests to ensure our methods would
    pass them. Along with our edge case tests we added 1-2 normal cases
    to make sure our methods would function normally.
-   
+
    We are certain we have covered most if not all the possibilities because
    we have spent time ensuring no edge case is left uncovered.
-   
-   
+
+
 */
 
-#include "assignments/dg/graph.h"
+//Change this back to absolute path, only for IDE
+//#include "assignments/dg/graph.h"
+#include "graph.h"
 #include "catch.h"
 
 //============================================================
@@ -124,7 +126,7 @@ SCENARIO("Testing InsertNode()") {
         WHEN("Node inserted") {
             THEN("Graph has 1 node and return true") {
                 REQUIRE(graph.InsertNode("hello") == true);
-                
+
                 std::vector<std::string> vec{"hello"};
                 gdwg::Graph<std::string, int> res{vec.begin(), vec.end()};
                 REQUIRE(graph == res);
@@ -138,7 +140,7 @@ SCENARIO("Testing InsertNode()") {
             THEN("Graph has 4 nodes") {
                 REQUIRE(graph.InsertNode("hello") == true);
 
-                
+
                 std::vector<std::string> vec{"hi", "bye", "shy", "hello"};
                 gdwg::Graph<std::string, int> res{vec.begin(), vec.end()};
                 REQUIRE(graph == res);
@@ -151,7 +153,7 @@ SCENARIO("Testing InsertNode()") {
         WHEN("Node with same value is inserted") {
             THEN("It return false and graph still has 1 node") {
                 REQUIRE(graph.InsertNode("hi") == false);
-                
+
                 gdwg::Graph<std::string, int> res{vec.begin(), vec.end()};
                 REQUIRE(graph == res);
             }
@@ -180,7 +182,7 @@ SCENARIO("Testing Clear()") {
             THEN("It should be empty") {
                 gdwg::Graph<std::string, int> res;
                 REQUIRE(graph == res);
-                
+
             }
         }
     }
@@ -192,7 +194,7 @@ SCENARIO("Testing Clear()") {
             THEN("It should be empty but after you can add another node to it") {
                 gdwg::Graph<std::string, int> res;
                 REQUIRE(graph == res);
-       
+
                 graph.InsertNode("lol");
                 res.InsertNode("lol");
                 REQUIRE(graph == res);
@@ -205,6 +207,50 @@ SCENARIO("Testing Clear()") {
 //============================================================
 // Friends
 //============================================================
+
+
+SCENARIO("Outstream operator overloading")
+{
+  gdwg::Graph<std::string, int> g;
+  g.InsertNode("hello");
+  g.InsertNode("how");
+  g.InsertNode("are");
+  g.InsertNode("you?");
+
+  g.InsertEdge("hello", "how", 5);
+  g.InsertEdge("hello", "are", 8);
+  g.InsertEdge("hello", "are", 2);
+
+  g.InsertEdge("how", "you?", 1);
+  g.InsertEdge("how", "hello", 4);
+
+  g.InsertEdge("are", "you?", 3);
+
+  std::cout << g << '\n';
+
+  gdwg::Graph<std::string, int> g2{g};
+
+  std::cout << g2 << "\n";
+  WHEN("Print out a normal graph (from assignment page)")
+  {
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 SCENARIO("Testing friend operator==") {
     GIVEN("Two empty graphs") {
         gdwg::Graph<std::string, int> graph;
@@ -330,7 +376,7 @@ SCENARIO("Testing friend operator==") {
         graph.InsertEdge("fly", "die", 5);
         graph.InsertEdge("shy", "die", 4);
         graph.InsertEdge("die", "fly", 3);
-        
+
         gdwg::Graph<std::string, int> res;
         res.InsertNode("die");
         res.InsertNode("bye");
@@ -344,7 +390,7 @@ SCENARIO("Testing friend operator==") {
         res.InsertNode("shy");
         res.InsertEdge("fly", "die", 5);
         res.InsertEdge("shy", "die", 4);
-        
+
         THEN("Return true") {
             REQUIRE(graph == res);
         }
@@ -363,7 +409,7 @@ SCENARIO("Testing friend operator==") {
         graph.InsertEdge("fly", "die", 5);
         graph.InsertEdge("shy", "die", 4);
         graph.InsertEdge("die", "fly", 3);
-        
+
         gdwg::Graph<std::string, int> res;
         res.InsertNode("die");
         res.InsertNode("bye");
@@ -377,7 +423,7 @@ SCENARIO("Testing friend operator==") {
         res.InsertNode("shy");
         res.InsertEdge("fly", "die", 4);
         res.InsertEdge("shy", "die", 4);
-        
+
         THEN("Return false") {
             REQUIRE((graph == res) == false);
         }
