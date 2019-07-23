@@ -14,7 +14,8 @@ int main() {
   g.InsertNode("how");
   g.InsertEdge("hello", "how", 4);
   g.InsertEdge("how", "hello", 4);
-  
+  g.GetNodes();
+  /*
   gdwg::Graph<std::string, int> h;
   h.InsertNode("hello");
   h.InsertNode("how");
@@ -25,7 +26,7 @@ int main() {
       std::cout << "they are equal\n";
   } else {
       std::cout << "they arent equal\n";
-  }
+  }*/
   
   /*
   g.InsertNode("are");

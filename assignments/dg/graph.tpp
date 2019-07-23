@@ -125,3 +125,123 @@ bool gdwg::Graph<N, E>::IsNode(const N& val) {
     }
     return true;
 }
+
+
+/* Checks if src and dst nodes are connected
+ */
+template <typename N, typename E>
+bool gdwg::Graph<N, E>::IsConnected(const N& src, const N& dst) {
+    
+    // Throw exception if source or destination node don't exist
+    if (!IsNode(src) || !IsNode(dst)) {
+        throw std::runtime_error("Cannot call Graph::IsConnected if src or dst node don't exist in the graph");
+    }
+    
+    // Iterate through the src node's in_edge_ array to look for an edge to dst node
+    auto in_edge_array = node_graph_[src]->in_edges_;
+    for (auto ite = in_edge_array.cbegin(); ite != in_edge_array.cend(); ite++) {
+        auto edge = *ite;
+        
+        // An edge is found so return true
+        if (edge->GetSrcValue() == dst) {
+            return true;
+        }
+    }
+    
+    // Iterate through the src node's out_edge_ array to look for an edge to dst node
+    auto out_edge_array = node_graph_[src]->out_edges_;
+    for (auto ite = out_edge_array.cbegin(); ite != out_edge_array.cend(); ite++) {
+        auto edge = *ite;
+        
+        // An edge is found so return true
+        if (edge->GetDstValue() == dst) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+/* Returns a vector of all nodes in the graph (sorted by increasing order of node)
+ */
+template <typename N, typename E>
+std::vector<N> gdwg::Graph<N, E>::GetNodes() {
+    
+    // Iterate through map containing all the node values and append to a vector
+    std::vector<N> result;
+    for (auto ite = node_graph_.cbegin(); ite != node_graph_.cend(); ite++) {
+        result.insert(result.begin(), ite->first);
+    }
+    
+    // Sort and return the vector
+    sort(result.begin(), result.end());
+    return result;
+}
+
+
+/* Returns a vector of nodes connected to the src node (sorted by increasing order of node)
+ */
+template <typename N, typename E>
+std::vector<N> gdwg::Graph<N, E>::GetConnected(const N& src) {
+    
+    // Throw exception if source node doesn't exist
+    if (!IsNode(src)) {
+        throw std::out_of_range("Cannot call Graph::GetConnected if src doesn't exist in the graph");
+    }
+    
+    // Iterate through each inward edge on source node and append the other connected node
+    std::unordered_set<N> result_set;
+    for (auto ite = node_graph_[src]->in_edges_.cbegin(); ite != node_graph_[src]->in_edges_.cend(); ite++) {
+        auto edge = *ite;
+        result_set.insert(edge->GetSrcValue());
+    }
+    
+    // Iterate through each outward edge on source node and append the destination node
+    for (auto ite = node_graph_[src]->out_edges_.cbegin(); ite != node_graph_[src]->out_edges_.cend(); ite++) {
+        auto edge = *ite;
+        result_set.insert(edge->GetDstValue());
+    }
+
+    // Convert the set into a vector and then sort it
+    std::vector<N> result_vec{result_set.begin(), result_set.end()};
+    sort(result_vec.begin(), result_vec.end());
+    
+    return result_vec;
+}
+
+/* Returns a vector of the weights of edges between two nodes (sorted by increasing order of edge)
+ */
+template <typename N, typename E>
+std::vector<E> gdwg::Graph<N, E>::GetWeights(const N& src, const N& dst) {
+    
+    // Throw exception if source or destination node don't exist
+    if (!IsNode(src) || !IsNode(dst)) {
+        throw std::out_of_range("Cannot call Graph::GetWeights if src or dst node don't exist in the graph");
+    }
+    
+    // Iterate through source node's in_edge_ array and look for edges that connect to dst node
+    std::vector<E> result_vec;
+    for (auto ite = node_graph_[src]->in_edges_.cbegin(); ite != node_graph_[src]->in_edges_.cend(); ite++) {
+        auto edge = *ite;
+        
+        // Edge connects to dst node so append it to the set
+        if (edge->GetSrcValue() == dst) {
+            result_vec.insert(result_vec.begin(), edge->weight_);
+        }
+    }
+    
+    // Iterate through source node's out_edge_ array and look for edges that connect to dst node
+    for (auto ite = node_graph_[src]->out_edges_.cbegin(); ite != node_graph_[src]->out_edges_.cend(); ite++) {
+        auto edge = *ite;
+        
+        // Edge connects to dst node so append it to the set
+        if (edge->GetDstValue() == dst) {
+            result_vec.insert(result_vec.begin(), edge->weight_);
+        }
+    }
+    
+    // Sort vector and then return
+    sort(result_vec.begin(), result_vec.end());
+    return result_vec;
+}

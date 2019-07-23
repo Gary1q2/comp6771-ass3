@@ -69,6 +69,18 @@ class Graph {
   // Checks if node already exists
   bool IsNode(const N& val);
   
+  // Checks if src and dst nodes are connected
+  bool IsConnected(const N& src, const N& dst);
+  
+  // Returns a vector all nodes in the graph (sorted by increasing order of node)
+  std::vector<N> GetNodes();
+  
+  // Returns a vector of nodes connected to the src node (sorted by increasing order of node)
+  std::vector<N> GetConnected(const N& src);
+  
+  // Returns a vector of the weights of edges between two nodes (sorted by increasing order of edge)
+  std::vector<E> GetWeights(const N& src, const N& dst);
+  
   //============================================================
   // Friends
   //============================================================
@@ -178,8 +190,6 @@ class Graph {
     N value_;                                          // Value of the node
     std::unordered_set<shared_ptr<Edge>> in_edges_;    // Edges that go into this node
     std::unordered_set<shared_ptr<Edge>> out_edges_;   // Edges that go AWAY from this node
-    
-    
   };
 
   
@@ -191,13 +201,13 @@ class Graph {
     
     // Return the source node's value
     N GetSrcValue() const {
-        std::shared_ptr p = src_.lock();
+        std::shared_ptr<Node> p = src_.lock();
         return p->value_;
     }
   
     // Return the destination node's value
     N GetDstValue() const {
-        std::shared_ptr p = dst_.lock();
+        std::shared_ptr<Node> p = dst_.lock();
         return p->value_;
     }
     
