@@ -33,7 +33,10 @@
 			<Add option="-fexceptions" />
 		</Compiler>
 		<Unit filename="catch.h" />
-		<Unit filename="client.cpp" />
+		<Unit filename="client.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
 		<Unit filename="graph.h" />
 		<Unit filename="graph.tpp" />
 		<Unit filename="graph_test.cpp" />

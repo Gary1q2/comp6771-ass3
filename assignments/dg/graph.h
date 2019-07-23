@@ -70,7 +70,13 @@ class Graph {
   // Operator overwrite to print out the stream
   friend std::ostream& operator<<(std::ostream& out_stream,
                                   const gdwg::Graph<N, E>& curr_graph) noexcept {
-    curr_graph.Get_all_nodes();
+
+    std::unordered_map<N, shared_ptr<Node>> all_nodes = curr_graph.Get_all_nodes();
+
+    for (std::pair<N, shared_ptr<Node>> element : all_nodes) {
+      out_stream << element.first << "(";
+      out_stream << element.second->in_edges_.size() << "\n";
+    }
     out_stream << "Hi\n";
     return out_stream;
   }
