@@ -1,33 +1,35 @@
 #include <iostream>
 #include <string>
 
+// Change this back to absolute path, only for IDE
 #include "assignments/dg/graph.h"
+#include "graph.h"
 
 // hello i am testing too - gary
 
 // Note: At the moment, there is no client.sampleout. Please do your own testing
 // Carter test 1
 int main() {
-  
+
   gdwg::Graph<std::string, int> g;
   g.InsertNode("hello");
   g.InsertNode("how");
   g.InsertEdge("hello", "how", 4);
   g.InsertEdge("how", "hello", 4);
-  g.GetNodes();
-  /*
+
   gdwg::Graph<std::string, int> h;
   h.InsertNode("hello");
   h.InsertNode("how");
   h.InsertEdge("hello", "how", 4);
   h.InsertEdge("how", "hello", 4);
-  
+
   if (g == h) {
-      std::cout << "they are equal\n";
+    std::cout << "they are equal\n";
   } else {
       std::cout << "they arent equal\n";
-  }*/
+  }
   
+
   /*
   g.InsertNode("are");
   g.InsertNode("you?");
