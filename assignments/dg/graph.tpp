@@ -40,7 +40,40 @@ gdwg::Graph<N, E>::Graph(std::initializer_list<N> list) {
     for (auto ite = list.begin(); ite != list.end(); ite++) {
         InsertNode(*ite);
     }
+}
 
+/* Copy constructor
+ */
+template <typename N, typename E>
+gdwg::Graph<N, E>::Graph(const Graph<N, E>& graph) {
+    
+    // Add all the nodes from the graph into the newly constructed graph
+    for (auto ite = graph.node_graph_.cbegin(); ite != graph.node_graph_.cend(); ite++) {
+        InsertNode(ite->first);
+    }
+    
+    // Iterate through all the edges in all the nodes and add all the edges
+    for (auto node_ite = graph.node_graph_.cbegin(); node_ite != graph.node_graph_.cend(); node_ite++) {
+        auto curr_node = node_ite->second;
+        for (auto edge_ite = curr_node->in_edges_.cbegin(); edge_ite != curr_node->in_edges_.cend(); edge_ite++) {
+            auto curr_edge = *edge_ite;
+            
+            // Convert the edge's weak pointer reference of node into a shared pointer to access the node's value
+            std::shared_ptr<Node> src = curr_edge->src_.lock();
+            std::shared_ptr<Node> dst = curr_edge->dst_.lock();
+            InsertEdge(src->value_, dst->value_, curr_edge->weight_);
+        }
+    }
+}
+
+
+/* Move constructor
+ */
+template <typename N, typename E>
+gdwg::Graph<N, E>::Graph(Graph<N, E>&& graph) {
+    
+    // Move the map pointer from graph to the constructed graph
+    node_graph_ = std::move(graph.node_graph_);
 }
 
 
