@@ -2,7 +2,7 @@
 #include <string>
 
 // Change this back to absolute path, only for IDE
-#include "assignments/dg/graph.h"
+//#include "assignments/dg/graph.h"
 #include "graph.h"
 
 // hello i am testing too - gary
@@ -11,24 +11,26 @@
 // Carter test 1
 int main() {
 
-  gdwg::Graph<std::string, int> g;
-  g.InsertNode("hello");
-  g.InsertNode("how");
-  g.InsertEdge("hello", "how", 4);
-  g.InsertEdge("how", "hello", 4);
+  gdwg::Graph<int, int> g;
+  g.InsertNode(1);
+  g.InsertNode(2);
+  g.InsertNode(3);
+  g.InsertNode(4);
+  g.InsertNode(5);
+  g.InsertNode(6);
 
-  gdwg::Graph<std::string, int> h;
-  h.InsertNode("hello");
-  h.InsertNode("how");
-  h.InsertEdge("hello", "how", 4);
-  h.InsertEdge("how", "hello", 4);
+  g.InsertEdge(1, 5, -1);
+  g.InsertEdge(2, 1, 1);
+  g.InsertEdge(2, 4, 2);
+  g.InsertEdge(3, 2, -8);
+  g.InsertEdge(3, 2, 2);
+  g.InsertEdge(4, 1, -4);
+  g.InsertEdge(4, 5, 3);
+  g.InsertEdge(5, 2, 7);
+  g.InsertEdge(6, 2, 5);
+  g.InsertEdge(6, 3, 10);
 
-  if (g == h) {
-    std::cout << "they are equal\n";
-  } else {
-      std::cout << "they arent equal\n";
-  }
-  
+  std::cout << g << '\n';
 
   /*
   g.InsertNode("are");
