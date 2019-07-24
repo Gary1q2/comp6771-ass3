@@ -2,7 +2,9 @@
 #define ASSIGNMENTS_DG_GRAPH_H_
 
 #include <algorithm>
+#include <exception>
 #include <iostream>
+#include <map>
 #include <memory>
 #include <unordered_map>
 #include <unordered_set>
@@ -59,20 +61,19 @@ class Graph {
 
   // Checks if node already exists
   bool IsNode(const N& val);
-  
+
   // Checks if src and dst nodes are connected
   bool IsConnected(const N& src, const N& dst);
-  
+
   // Returns a vector all nodes in the graph (sorted by increasing order of node)
   std::vector<N> GetNodes();
-  
+
   // Returns a vector of nodes connected to the src node (sorted by increasing order of node)
   std::vector<N> GetConnected(const N& src);
-  
+
   // Returns a vector of the weights of edges between two nodes (sorted by increasing order of edge)
   std::vector<E> GetWeights(const N& src, const N& dst);
 
-  
   //============================================================
   // Friends
   //============================================================
@@ -80,8 +81,47 @@ class Graph {
   // Operator overwrite to print out the stream
   friend std::ostream& operator<<(std::ostream& out_stream,
                                   const gdwg::Graph<N, E>& curr_graph) noexcept {
-    curr_graph.Get_all_nodes();
-    out_stream << "Hi\n";
+
+    auto unordered = curr_graph.node_graph_;
+    std::map<N, shared_ptr<Node>> all_nodes(unordered.begin(), unordered.end());
+    std::cout << "Hi\n";
+    for (auto element : all_nodes) {
+      out_stream << element.first << " (\n";
+      std::vector<shared_ptr<Edge>> all_edge(element.second->out_edges_.begin(),
+                                             element.second->out_edges_.end());
+      /**
+       * sort lamda function
+       */
+
+      std::sort(all_edge.begin(), all_edge.end(),
+                [](const std::shared_ptr<Edge>& m1, const std::shared_ptr<Edge>& m2) -> bool {
+                  bool flag;
+                  try {
+                    std::shared_ptr<Node> e1 = m1->dst_.lock();
+                    std::shared_ptr<Node> e2 = m2->dst_.lock();
+                    auto v1 = e1->value_;
+                    auto v2 = e2->value_;
+                    if (v1 == v2) {
+                      flag = (m1->weight_ < m2->weight_);
+                    } else {
+                      flag = (v1 < v2);
+                    }
+                  } catch (std::bad_weak_ptr b) {
+                    std::cout << "BAD weak_ptr \n ";
+                  }
+                  return flag;
+                });
+      for (auto edge : all_edge) {
+        try {
+          auto dst_node = edge->dst_.lock();
+          out_stream << dst_node->value_ << " | ";
+          out_stream << edge->weight_ << "\n";
+        } catch (std::bad_weak_ptr b) {
+          out_stream << "BAD weak_ptr \n ";
+        }
+      }
+      out_stream << ")\n\n";
+    }
     return out_stream;
   }
 
