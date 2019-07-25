@@ -33,8 +33,7 @@ gdwg::Graph<N, E>::Graph(typename std::vector<std::tuple<N, N, E>>::const_iterat
  */
 template <typename N, typename E>
 gdwg::Graph<N, E>::Graph(std::initializer_list<N> list) {
-<<<<<<< HEAD
-    
+
     // Iterate through list and add the nodes
     for (auto ite = list.begin(); ite != list.end(); ite++) {
         InsertNode(*ite);
@@ -251,14 +250,14 @@ std::vector<E> gdwg::Graph<N, E>::GetWeights(const N& src, const N& dst) {
     // Iterate through source node's out_edge_ array and look for edges that connect to dst node
     for (auto ite = node_graph_[src]->out_edges_.cbegin(); ite != node_graph_[src]->out_edges_.cend(); ite++) {
         auto edge = *ite;
-        
+    
         // Edge connects to dst node so append it to the set
         if (edge->GetDstValue() == dst) {
             result_vec.insert(result_vec.begin(), edge->weight_);
         }
-        
-        // Sort vector and then return
-        sort(result_vec.begin(), result_vec.end());
-        return result_vec;
     }
+    
+    // Sort vector and then return
+    sort(result_vec.begin(), result_vec.end());
+    return result_vec;
 }
