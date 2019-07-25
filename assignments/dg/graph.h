@@ -11,9 +11,6 @@
 #include <vector>
 
 namespace gdwg {
-using std::shared_ptr;
-using std::weak_ptr;
-
 template <typename N, typename E>
 class Graph {
  public:
@@ -37,10 +34,10 @@ class Graph {
   Graph(std::initializer_list<N> list);
 
   // Copy constructor
-  // Graph(const Graph<N, E>& graph);
+  Graph(const Graph<N, E>& graph);
 
   // Move constructor
-  // Graph(Graph<N, E>&& graph);
+  Graph(Graph<N, E>&& graph);
 
   // Destructor
   ~Graph() = default;
@@ -216,6 +213,13 @@ class Graph {
     return true;
   }
 
+  // Compares if two graphs are not the same or are
+  friend bool operator!=(const gdwg::Graph<N, E>& graph1, const gdwg::Graph<N, E>& graph2) {
+      
+      // Use the friend operator== and just negate the value
+      return !(graph1 == graph2);
+  }
+  
  private:
   struct Edge;  // Defining Edge struct here so it can be included in the Node class
 
@@ -237,16 +241,16 @@ class Graph {
     }
 
     // Variables
-    N value_;                                         // Value of the node
-    std::unordered_set<shared_ptr<Edge>> in_edges_;   // Edges that go into this node
-    std::unordered_set<shared_ptr<Edge>> out_edges_;  // Edges that go AWAY from this node
+    N value_;                                               // Value of the node
+    std::unordered_set<std::shared_ptr<Edge>> in_edges_;    // Edges that go into this node
+    std::unordered_set<std::shared_ptr<Edge>> out_edges_;   // Edges that go AWAY from this node
   };
 
   // Edge class
   struct Edge {
 
     // Edge constructor
-    Edge(shared_ptr<Node> src, shared_ptr<Node> dst, const E& w)
+    Edge(std::shared_ptr<Node> src, std::shared_ptr<Node> dst, const E& w)
       : src_{src}, dst_{dst}, weight_{w} {}
 
     // Return the source node's value
@@ -262,13 +266,20 @@ class Graph {
     }
 
     // Variables
-    weak_ptr<Node> src_;  // Node which the edge is coming from
-    weak_ptr<Node> dst_;  // Node which the edge is going to
-    E weight_;            // Weight of the edge
+    std::weak_ptr<Node> src_;  // Node which the edge is coming from
+    std::weak_ptr<Node> dst_;  // Node which the edge is going to
+    E weight_;                 // Weight of the edge
   };
 
   // Map containing all the nodes in the graph
-  std::unordered_map<N, shared_ptr<Node>> node_graph_;
+  std::unordered_map<N, std::shared_ptr<Node>> node_graph_;
+
+  //============================================================
+  // Helper function
+  //============================================================
+  std::unordered_map<N, std::shared_ptr<Node>> Get_all_nodes() const noexcept {
+    return this->node_graph_;
+  }
 };
 
 }  // namespace gdwg

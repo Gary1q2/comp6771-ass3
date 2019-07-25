@@ -196,6 +196,156 @@ SCENARIO("Testing constructor taking in an initializer list") {
   }
 }
 
+SCENARIO("Testing copy constructor") {
+    GIVEN("An empty graph") {
+        gdwg::Graph<std::string, int> graph;
+        WHEN("Copied") {
+            gdwg::Graph<std::string, int> copy{graph};
+            THEN("We get another empty graph") {
+                gdwg::Graph<std::string, int> res;
+                REQUIRE(copy == res);
+            }
+        }
+    }
+    GIVEN("A graph with 1 node") {
+        gdwg::Graph<std::string, int> graph;
+        graph.InsertNode("hi");
+        WHEN("Copied") {
+            gdwg::Graph<std::string, int> copy{graph};
+            THEN("We get a graph with 1 node") {
+                gdwg::Graph<std::string, int> res;
+                res.InsertNode("hi");
+                REQUIRE(copy == res);
+            }
+        }
+    }
+    GIVEN("A graph with 3 nodes") {
+        gdwg::Graph<std::string, int> graph;
+        graph.InsertNode("hi");
+        graph.InsertNode("bye");
+        graph.InsertNode("lol");
+        WHEN("Copied") {
+            gdwg::Graph<std::string, int> copy{graph};
+            THEN("We get a graph with 3 nodes") {
+                gdwg::Graph<std::string, int> res;
+                res.InsertNode("hi");
+                res.InsertNode("bye");
+                res.InsertNode("lol");
+                REQUIRE(copy == res);
+            }
+        }
+    }
+    GIVEN("A graph with 2 nodes and 1 edge") {
+        gdwg::Graph<std::string, int> graph;
+        graph.InsertNode("hi");
+        graph.InsertNode("bye");
+        graph.InsertEdge("hi", "bye", 3);
+        WHEN("Copied") {
+            gdwg::Graph<std::string, int> copy{graph};
+            THEN("We get a graph with 2 nodes and 1 edge") {
+                gdwg::Graph<std::string, int> res;
+                res.InsertNode("hi");
+                res.InsertNode("bye");
+                res.InsertEdge("hi", "bye", 3);
+                REQUIRE(copy == res);
+            }
+        }
+    }
+    GIVEN("A graph with 2 nodes and 2 edges") {
+        gdwg::Graph<std::string, int> graph;
+        graph.InsertNode("hi");
+        graph.InsertNode("bye");
+        graph.InsertEdge("hi", "bye", 3);
+        graph.InsertEdge("bye", "hi", 3);
+        WHEN("Copied") {
+            gdwg::Graph<std::string, int> copy{graph};
+            THEN("We get a graph with 2 nodes and 2 edges") {
+                gdwg::Graph<std::string, int> res;
+                res.InsertNode("hi");
+                res.InsertNode("bye");
+                res.InsertEdge("hi", "bye", 3);
+                res.InsertEdge("bye", "hi", 3);
+                REQUIRE(copy == res);
+            }
+        }
+    }
+    GIVEN("A graph with 2 nodes and 4 edges") {
+        gdwg::Graph<std::string, int> graph;
+        graph.InsertNode("hi");
+        graph.InsertNode("bye");
+        graph.InsertEdge("hi", "bye", 3);
+        graph.InsertEdge("hi", "bye", 2);
+        graph.InsertEdge("bye", "hi", 3);
+        graph.InsertEdge("bye", "hi", 2);
+        WHEN("Copied") {
+            gdwg::Graph<std::string, int> copy{graph};
+            THEN("We get a graph with 2 nodes and 4 edges") {
+                gdwg::Graph<std::string, int> res;
+                res.InsertNode("hi");
+                res.InsertNode("bye");
+                res.InsertEdge("hi", "bye", 3);
+                res.InsertEdge("hi", "bye", 2);
+                res.InsertEdge("bye", "hi", 3);
+                res.InsertEdge("bye", "hi", 2);
+                REQUIRE(copy == res);
+            }
+        }
+    }
+}
+
+SCENARIO("Testing move constructor") {
+    GIVEN("An empty graph") {
+        gdwg::Graph<std::string, int> graph;
+        WHEN("Moved") {
+            gdwg::Graph<std::string, int> move = std::move(graph);
+            THEN("Moved graph is empty") {
+                gdwg::Graph<std::string, int> res;
+                REQUIRE(move == res);
+            }
+        }
+    }
+    GIVEN("A graph with 1 node and 1 edge") {
+        gdwg::Graph<std::string, int> graph;
+        graph.InsertNode("hi");
+        graph.InsertEdge("hi", "hi", 4);
+        WHEN("Moved") {
+            gdwg::Graph<std::string, int> move = std::move(graph);
+            THEN("Moved graph is empty") {
+                gdwg::Graph<std::string, int> res;
+                res.InsertNode("hi");
+                res.InsertEdge("hi", "hi", 4);
+                REQUIRE(move == res);
+            }
+        }
+    }
+    GIVEN("A graph with 3 node and 5 edges") {
+        gdwg::Graph<std::string, int> graph;
+        graph.InsertNode("hi");
+        graph.InsertNode("bye");
+        graph.InsertNode("lol");
+        graph.InsertEdge("hi", "hi", 4);
+        graph.InsertEdge("hi", "hi", 1);
+        graph.InsertEdge("hi", "bye", 3);
+        graph.InsertEdge("bye", "lol", 2);
+        graph.InsertEdge("lol", "hi", 2);
+        WHEN("Moved") {
+            gdwg::Graph<std::string, int> move = std::move(graph);
+            THEN("Moved graph is empty") {
+                gdwg::Graph<std::string, int> res;
+                res.InsertNode("hi");
+                res.InsertNode("bye");
+                res.InsertNode("lol");
+                res.InsertEdge("hi", "hi", 4);
+                res.InsertEdge("hi", "hi", 1);
+                res.InsertEdge("hi", "bye", 3);
+                res.InsertEdge("bye", "lol", 2);
+                res.InsertEdge("lol", "hi", 2);
+                REQUIRE(move == res);
+            }
+        }
+    }
+}
+
 //============================================================
 // Operations
 //============================================================
@@ -633,165 +783,209 @@ SCENARIO("Outstream operator overloading") {
   WHEN("Print out a normal graph (from assignment page)") {}
 }
 
-SCENARIO("Testing friend operator==") {
-  GIVEN("Two empty graphs") {
-    gdwg::Graph<std::string, int> graph;
-    gdwg::Graph<std::string, int> res;
-    THEN("Return true") { REQUIRE((graph == res)); }
-  }
-  GIVEN("Two graphs with different amount of nodes") {
-    gdwg::Graph<std::string, int> graph;
-    graph.InsertNode("hi");
-    gdwg::Graph<std::string, int> res;
-    res.InsertNode("hi");
-    res.InsertNode("bye");
-    THEN("Return false") { REQUIRE((graph == res) == false); }
-  }
-  GIVEN("Two graphs with same amount of nodes and same nodes") {
-    gdwg::Graph<std::string, int> graph;
-    graph.InsertNode("hi");
-    graph.InsertNode("bye");
-    gdwg::Graph<std::string, int> res;
-    res.InsertNode("hi");
-    res.InsertNode("bye");
-    THEN("Return true") { REQUIRE(graph == res); }
-  }
-  GIVEN("Two graphs with same amount of nodes but different nodes") {
-    gdwg::Graph<std::string, int> graph;
-    graph.InsertNode("hi");
-    graph.InsertNode("bye");
-    gdwg::Graph<std::string, int> res;
-    res.InsertNode("hi");
-    res.InsertNode("lol");
-    THEN("Return false") { REQUIRE((graph == res) == false); }
-  }
-  GIVEN("Two graphs with same nodes but different in_edge_ array size") {
-    gdwg::Graph<std::string, int> graph;
-    graph.InsertNode("hi");
-    graph.InsertNode("bye");
-    graph.InsertEdge("hi", "bye", 3);
-    gdwg::Graph<std::string, int> res;
-    res.InsertNode("hi");
-    res.InsertNode("bye");
-    THEN("Return false") { REQUIRE((graph == res) == false); }
-  }
-  GIVEN("Two graphs with same nodes, same in_edge_ array size but different out_edge_ array size") {
-    gdwg::Graph<std::string, int> graph;
-    graph.InsertNode("hi");
-    graph.InsertNode("bye");
-    graph.InsertEdge("hi", "bye", 3);
-    gdwg::Graph<std::string, int> res;
-    res.InsertNode("hi");
-    res.InsertNode("bye");
-    res.InsertEdge("hi", "bye", 3);
-    res.InsertEdge("bye", "hi", 3);
-    THEN("Return false") { REQUIRE((graph == res) == false); }
-  }
-  GIVEN("Two graphs with same nodes, same edge array sizes and same edge values") {
-    gdwg::Graph<std::string, int> graph;
-    graph.InsertNode("hi");
-    graph.InsertNode("bye");
-    graph.InsertEdge("hi", "bye", 3);
-    graph.InsertEdge("bye", "hi", 3);
-    gdwg::Graph<std::string, int> res;
-    res.InsertNode("hi");
-    res.InsertNode("bye");
-    res.InsertEdge("hi", "bye", 3);
-    res.InsertEdge("bye", "hi", 3);
-    THEN("Return true") { REQUIRE(graph == res); }
-  }
-  GIVEN("Two graphs with same nodes, same edge array sizes, but different edge values") {
-    gdwg::Graph<std::string, int> graph;
-    graph.InsertNode("hi");
-    graph.InsertNode("bye");
-    graph.InsertEdge("hi", "bye", 3);
-    graph.InsertEdge("bye", "hi", 3);
-    gdwg::Graph<std::string, int> res;
-    res.InsertNode("hi");
-    res.InsertNode("bye");
-    res.InsertEdge("hi", "hi", 3);
-    res.InsertEdge("bye", "hi", 3);
-    THEN("Return false") { REQUIRE((graph == res) == false); }
-  }
-  GIVEN("Two graphs with same nodes, same edge array sizes and same edge values but created in "
-        "different order") {
-    gdwg::Graph<std::string, int> graph;
-    graph.InsertNode("hi");
-    graph.InsertNode("bye");
-    graph.InsertEdge("hi", "bye", 3);
-    graph.InsertEdge("bye", "hi", 3);
-    gdwg::Graph<std::string, int> res;
-    res.InsertNode("hi");
-    res.InsertNode("bye");
-    res.InsertEdge("bye", "hi", 3);
-    res.InsertEdge("hi", "bye", 3);
-    THEN("Return true") { REQUIRE(graph == res); }
-  }
-  GIVEN("Two complicated graphs with 5 nodes and 7 edges that are all equal, but created in "
-        "different orders") {
-    gdwg::Graph<std::string, int> graph;
-    graph.InsertNode("hi");
-    graph.InsertNode("bye");
-    graph.InsertNode("fly");
-    graph.InsertNode("die");
-    graph.InsertNode("shy");
-    graph.InsertEdge("hi", "bye", 4);
-    graph.InsertEdge("hi", "fly", 2);
-    graph.InsertEdge("hi", "hi", 4);
-    graph.InsertEdge("hi", "hi", 2);
-    graph.InsertEdge("fly", "die", 5);
-    graph.InsertEdge("shy", "die", 4);
-    graph.InsertEdge("die", "fly", 3);
 
-    gdwg::Graph<std::string, int> res;
-    res.InsertNode("die");
-    res.InsertNode("bye");
-    res.InsertNode("fly");
-    res.InsertEdge("die", "fly", 3);
-    res.InsertNode("hi");
-    res.InsertEdge("hi", "hi", 4);
-    res.InsertEdge("hi", "hi", 2);
-    res.InsertEdge("hi", "bye", 4);
-    res.InsertEdge("hi", "fly", 2);
-    res.InsertNode("shy");
-    res.InsertEdge("fly", "die", 5);
-    res.InsertEdge("shy", "die", 4);
 
-    THEN("Return true") { REQUIRE(graph == res); }
-  }
-  GIVEN("Two complicated graphs with 5 nodes and 7 edges that are slightly different") {
-    gdwg::Graph<std::string, int> graph;
-    graph.InsertNode("hi");
-    graph.InsertNode("bye");
-    graph.InsertNode("fly");
-    graph.InsertNode("die");
-    graph.InsertNode("shy");
-    graph.InsertEdge("hi", "bye", 4);
-    graph.InsertEdge("hi", "fly", 2);
-    graph.InsertEdge("hi", "hi", 4);
-    graph.InsertEdge("hi", "hi", 2);
-    graph.InsertEdge("fly", "die", 5);
-    graph.InsertEdge("shy", "die", 4);
-    graph.InsertEdge("die", "fly", 3);
+SCENARIO("Testing friend operator== and operator!=") {
+    GIVEN("Two empty graphs") {
+        gdwg::Graph<std::string, int> graph;
+        gdwg::Graph<std::string, int> res;
+        THEN("They are the same") {
+            REQUIRE((graph == res) == true);
+            REQUIRE((graph != res) == false);
+        }
+    }
+    GIVEN("Two graphs with different amount of nodes") {
+        gdwg::Graph<std::string, int> graph;
+        graph.InsertNode("hi");
+        gdwg::Graph<std::string, int> res;
+        res.InsertNode("hi");
+        res.InsertNode("bye");
+        THEN("They are different") {
+            REQUIRE((graph == res) == false);
+            REQUIRE((graph != res) == true);
+        }
+    }
+    GIVEN("Two graphs with same amount of nodes") {
+        gdwg::Graph<std::string, int> graph;
+        graph.InsertNode("hi");
+        graph.InsertNode("bye");
+        gdwg::Graph<std::string, int> res;
+        res.InsertNode("hi");
+        res.InsertNode("bye");
+        THEN("They are the same") {
+            REQUIRE((graph == res) == true);
+            REQUIRE((graph != res) == false);
+        }
+    }
+    GIVEN("Two graphs with same amount of nodes but different nodes") {
+        gdwg::Graph<std::string, int> graph;
+        graph.InsertNode("hi");
+        graph.InsertNode("bye");
+        gdwg::Graph<std::string, int> res;
+        res.InsertNode("hi");
+        res.InsertNode("lol");
+        THEN("They are different") {
+            REQUIRE((graph == res) == false);
+            REQUIRE((graph != res) == true);
+        }
+    }
+    GIVEN("Two graphs with same nodes but different in_edge_ array size") {
+        gdwg::Graph<std::string, int> graph;
+        graph.InsertNode("hi");
+        graph.InsertNode("bye");
+        graph.InsertEdge("hi", "bye", 3);
+        gdwg::Graph<std::string, int> res;
+        res.InsertNode("hi");
+        res.InsertNode("bye");
+        THEN("They are different") {
+            REQUIRE((graph == res) == false);
+            REQUIRE((graph != res) == true);
+        }
+    }
+    GIVEN("Two graphs with same nodes, same in_edge_ array size but different out_edge_ array size") {
+        gdwg::Graph<std::string, int> graph;
+        graph.InsertNode("hi");
+        graph.InsertNode("bye");
+        graph.InsertEdge("hi", "bye", 3);
+        gdwg::Graph<std::string, int> res;
+        res.InsertNode("hi");
+        res.InsertNode("bye");
+        res.InsertEdge("hi", "bye", 3);
+        res.InsertEdge("bye", "hi", 3);
+        THEN("They are different") {
+            REQUIRE((graph == res) == false);
+            REQUIRE((graph != res) == true);
+        }
+    }
+    GIVEN("Two graphs with same nodes, same edge array sizes and same edge values") {
+        gdwg::Graph<std::string, int> graph;
+        graph.InsertNode("hi");
+        graph.InsertNode("bye");
+        graph.InsertEdge("hi", "bye", 3);
+        graph.InsertEdge("bye", "hi", 3);
+        gdwg::Graph<std::string, int> res;
+        res.InsertNode("hi");
+        res.InsertNode("bye");
+        res.InsertEdge("hi", "bye", 3);
+        res.InsertEdge("bye", "hi", 3);
+        THEN("They are the same") {
+            REQUIRE((graph == res) == true);
+            REQUIRE((graph != res) == false);
+        }
+    }
+    GIVEN("Two graphs with same nodes, same edge array sizes, but different edge values") {
+        gdwg::Graph<std::string, int> graph;
+        graph.InsertNode("hi");
+        graph.InsertNode("bye");
+        graph.InsertEdge("hi", "bye", 3);
+        graph.InsertEdge("bye", "hi", 3);
+        gdwg::Graph<std::string, int> res;
+        res.InsertNode("hi");
+        res.InsertNode("bye");
+        res.InsertEdge("hi", "hi", 3);
+        res.InsertEdge("bye", "hi", 3);
+        THEN("They are different") {
+            REQUIRE((graph == res) == false);
+            REQUIRE((graph != res) == true);
+        }
+    }
+    GIVEN("Two graphs with same nodes, same edge array sizes and same edge values but created in different order") {
+        gdwg::Graph<std::string, int> graph;
+        graph.InsertNode("hi");
+        graph.InsertNode("bye");
+        graph.InsertEdge("hi", "bye", 3);
+        graph.InsertEdge("bye", "hi", 3);
+        gdwg::Graph<std::string, int> res;
+        res.InsertNode("hi");
+        res.InsertNode("bye");
+        res.InsertEdge("bye", "hi", 3);
+        res.InsertEdge("hi", "bye", 3);
+        THEN("They are the same") {
+            REQUIRE((graph == res) == true);
+            REQUIRE((graph != res) == false);
+        }
+    }
+    GIVEN("Two complicated graphs with 5 nodes and 7 edges that are all equal, but created in different orders") {
+        gdwg::Graph<std::string, int> graph;
+        graph.InsertNode("hi");
+        graph.InsertNode("bye");
+        graph.InsertNode("fly");
+        graph.InsertNode("die");
+        graph.InsertNode("shy");
+        graph.InsertEdge("hi", "bye", 4);
+        graph.InsertEdge("hi", "fly", 2);
+        graph.InsertEdge("hi", "hi", 4);
+        graph.InsertEdge("hi", "hi", 2);
+        graph.InsertEdge("fly", "die", 5);
+        graph.InsertEdge("shy", "die", 4);
+        graph.InsertEdge("die", "fly", 3);
 
-    gdwg::Graph<std::string, int> res;
-    res.InsertNode("die");
-    res.InsertNode("bye");
-    res.InsertNode("fly");
-    res.InsertEdge("die", "fly", 3);
-    res.InsertNode("hi");
-    res.InsertEdge("hi", "hi", 4);
-    res.InsertEdge("hi", "hi", 2);
-    res.InsertEdge("hi", "bye", 4);
-    res.InsertEdge("hi", "fly", 2);
-    res.InsertNode("shy");
-    res.InsertEdge("fly", "die", 4);
-    res.InsertEdge("shy", "die", 4);
+        gdwg::Graph<std::string, int> res;
+        res.InsertNode("die");
+        res.InsertNode("bye");
+        res.InsertNode("fly");
+        res.InsertEdge("die", "fly", 3);
+        res.InsertNode("hi");
+        res.InsertEdge("hi", "hi", 4);
+        res.InsertEdge("hi", "hi", 2);
+        res.InsertEdge("hi", "bye", 4);
+        res.InsertEdge("hi", "fly", 2);
+        res.InsertNode("shy");
+        res.InsertEdge("fly", "die", 5);
+        res.InsertEdge("shy", "die", 4);
 
-    THEN("Return false") { REQUIRE((graph == res) == false); }
-  }
+        THEN("They are the same") {
+            REQUIRE((graph == res) == true);
+            REQUIRE((graph != res) == false);
+        }
+    }
+    GIVEN("Two complicated graphs with 5 nodes and 7 edges that are slightly different") {
+        gdwg::Graph<std::string, int> graph;
+        graph.InsertNode("hi");
+        graph.InsertNode("bye");
+        graph.InsertNode("fly");
+        graph.InsertNode("die");
+        graph.InsertNode("shy");
+        graph.InsertEdge("hi", "bye", 4);
+        graph.InsertEdge("hi", "fly", 2);
+        graph.InsertEdge("hi", "hi", 4);
+        graph.InsertEdge("hi", "hi", 2);
+        graph.InsertEdge("fly", "die", 5);
+        graph.InsertEdge("shy", "die", 4);
+        graph.InsertEdge("die", "fly", 3);
+
+        gdwg::Graph<std::string, int> res;
+        res.InsertNode("die");
+        res.InsertNode("bye");
+        res.InsertNode("fly");
+        res.InsertEdge("die", "fly", 3);
+        res.InsertNode("hi");
+        res.InsertEdge("hi", "hi", 4);
+        res.InsertEdge("hi", "hi", 2);
+        res.InsertEdge("hi", "bye", 4);
+        res.InsertEdge("hi", "fly", 2);
+        res.InsertNode("shy");
+        res.InsertEdge("fly", "die", 4);
+        res.InsertEdge("shy", "die", 4);
+
+        THEN("They are different") {
+            REQUIRE((graph == res) == false);
+            REQUIRE((graph != res) == true);
+        }
+    }
 }
 
 //============================================================
 // Helper methods
 //============================================================
+SCENARIO("Testing GetEdgeDst() custom method in Node datatype") {
+
+}
+
+SCENARIO("Testing GetSrcValue() custom method in Edge datatype") {
+
+}
+
+SCENARIO("Testing GetDstValue() custom method in Edge datatype") {
+
+}
