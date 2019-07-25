@@ -351,6 +351,175 @@ SCENARIO("Testing move constructor") {
 // Operations
 //============================================================
 
+SCENARIO("Testing copy assignment") {
+  GIVEN("An empty graph") {
+    gdwg::Graph<std::string, int> graph;
+    WHEN("Copied") {
+      gdwg::Graph<std::string, int> copy;
+      copy = graph;
+      THEN("We get another empty graph") {
+        gdwg::Graph<std::string, int> res;
+        REQUIRE(copy == res);
+        REQUIRE(copy == graph);
+      }
+    }
+  }
+  GIVEN("A graph with 1 node") {
+    gdwg::Graph<std::string, int> graph;
+    graph.InsertNode("hi");
+    WHEN("Copied") {
+      gdwg::Graph<std::string, int> copy;
+      copy = graph;
+      THEN("We get a graph with 1 node") {
+        gdwg::Graph<std::string, int> res;
+        res.InsertNode("hi");
+        REQUIRE(copy == res);
+        REQUIRE(copy == graph);
+      }
+    }
+  }
+  GIVEN("A graph with 3 nodes") {
+    gdwg::Graph<std::string, int> graph;
+    graph.InsertNode("hi");
+    graph.InsertNode("bye");
+    graph.InsertNode("lol");
+    WHEN("Copied") {
+      gdwg::Graph<std::string, int> copy;
+      copy = graph;
+      THEN("We get a graph with 3 nodes") {
+        gdwg::Graph<std::string, int> res;
+        res.InsertNode("hi");
+        res.InsertNode("bye");
+        res.InsertNode("lol");
+        REQUIRE(copy == res);
+        REQUIRE(copy == graph);
+      }
+    }
+  }
+  GIVEN("A graph with 2 nodes and 1 edge") {
+    gdwg::Graph<std::string, int> graph;
+    graph.InsertNode("hi");
+    graph.InsertNode("bye");
+    graph.InsertEdge("hi", "bye", 3);
+    WHEN("Copied") {
+      gdwg::Graph<std::string, int> copy;
+      copy = graph;
+      THEN("We get a graph with 2 nodes and 1 edge") {
+        gdwg::Graph<std::string, int> res;
+        res.InsertNode("hi");
+        res.InsertNode("bye");
+        res.InsertEdge("hi", "bye", 3);
+        REQUIRE(copy == res);
+        REQUIRE(copy == graph);
+      }
+    }
+  }
+  GIVEN("A graph with 2 nodes and 2 edges") {
+    gdwg::Graph<std::string, int> graph;
+    graph.InsertNode("hi");
+    graph.InsertNode("bye");
+    graph.InsertEdge("hi", "bye", 3);
+    graph.InsertEdge("bye", "hi", 3);
+    WHEN("Copied") {
+      gdwg::Graph<std::string, int> copy;
+      copy = graph;
+      THEN("We get a graph with 2 nodes and 2 edges") {
+        gdwg::Graph<std::string, int> res;
+        res.InsertNode("hi");
+        res.InsertNode("bye");
+        res.InsertEdge("hi", "bye", 3);
+        res.InsertEdge("bye", "hi", 3);
+        REQUIRE(copy == res);
+        REQUIRE(copy == graph);
+      }
+    }
+  }
+  GIVEN("A graph with 2 nodes and 4 edges") {
+    gdwg::Graph<std::string, int> graph;
+    graph.InsertNode("hi");
+    graph.InsertNode("bye");
+    graph.InsertEdge("hi", "bye", 3);
+    graph.InsertEdge("hi", "bye", 2);
+    graph.InsertEdge("bye", "hi", 3);
+    graph.InsertEdge("bye", "hi", 2);
+    WHEN("Copied") {
+      gdwg::Graph<std::string, int> copy;
+      copy = graph;
+      THEN("We get a graph with 2 nodes and 4 edges") {
+        gdwg::Graph<std::string, int> res;
+        res.InsertNode("hi");
+        res.InsertNode("bye");
+        res.InsertEdge("hi", "bye", 3);
+        res.InsertEdge("hi", "bye", 2);
+        res.InsertEdge("bye", "hi", 3);
+        res.InsertEdge("bye", "hi", 2);
+        REQUIRE(copy == res);
+        REQUIRE(copy == graph);
+      }
+    }
+  }
+}
+SCENARIO("Testing Move Assignment") {
+  GIVEN("An empty graph") {
+    gdwg::Graph<std::string, int> graph;
+    WHEN("Moved") {
+      gdwg::Graph<std::string, int> move;
+      move = std::move(graph);
+      THEN("Moved graph is empty") {
+        gdwg::Graph<std::string, int> res;
+        REQUIRE(move == res);
+        REQUIRE(move == graph);
+      }
+    }
+  }
+  GIVEN("A graph with 1 node and 1 edge") {
+    gdwg::Graph<std::string, int> graph;
+    gdwg::Graph<std::string, int> empty;
+    graph.InsertNode("hi");
+    graph.InsertEdge("hi", "hi", 4);
+    WHEN("Moved") {
+      gdwg::Graph<std::string, int> move;
+      move = std::move(graph);
+      THEN("Moved graph is empty") {
+        gdwg::Graph<std::string, int> res;
+        res.InsertNode("hi");
+        res.InsertEdge("hi", "hi", 4);
+        REQUIRE(move == res);
+        REQUIRE(graph == empty);
+      }
+    }
+  }
+  GIVEN("A graph with 3 node and 5 edges") {
+    gdwg::Graph<std::string, int> graph;
+    gdwg::Graph<std::string, int> empty;
+    graph.InsertNode("hi");
+    graph.InsertNode("bye");
+    graph.InsertNode("lol");
+    graph.InsertEdge("hi", "hi", 4);
+    graph.InsertEdge("hi", "hi", 1);
+    graph.InsertEdge("hi", "bye", 3);
+    graph.InsertEdge("bye", "lol", 2);
+    graph.InsertEdge("lol", "hi", 2);
+    WHEN("Moved") {
+      gdwg::Graph<std::string, int> move;
+      move = std::move(graph);
+      THEN("Moved graph is empty") {
+        gdwg::Graph<std::string, int> res;
+        res.InsertNode("hi");
+        res.InsertNode("bye");
+        res.InsertNode("lol");
+        res.InsertEdge("hi", "hi", 4);
+        res.InsertEdge("hi", "hi", 1);
+        res.InsertEdge("hi", "bye", 3);
+        res.InsertEdge("bye", "lol", 2);
+        res.InsertEdge("lol", "hi", 2);
+        REQUIRE(move == res);
+        REQUIRE(graph == empty);
+      }
+    }
+  }
+}
+
 //============================================================
 // Methods
 //============================================================
@@ -1070,3 +1239,4 @@ SCENARIO("Testing GetEdgeDst() custom method in Node datatype") {}
 SCENARIO("Testing GetSrcValue() custom method in Edge datatype") {}
 
 SCENARIO("Testing GetDstValue() custom method in Edge datatype") {}
+

@@ -79,6 +79,59 @@ gdwg::Graph<N, E>::Graph(Graph<N, E>&& graph) {
 //========================================================================
 // Operations
 //========================================================================
+/**
+ * Copy Assignment
+ */
+template <typename N, typename E>
+gdwg::Graph<N, E>& gdwg::Graph<N, E>::operator=(const gdwg::Graph<N, E>& graph) noexcept {
+
+  if (this == &graph) {
+    return *this;
+  } else {
+    this->Clear();
+
+    // Add all the nodes from the graph into the newly constructed graph
+    for (auto ite = graph.node_graph_.cbegin(); ite != graph.node_graph_.cend(); ite++) {
+      InsertNode(ite->first);
+    }
+
+    // Iterate through all the edges in all the nodes and add all the edges
+    for (auto node_ite = graph.node_graph_.cbegin(); node_ite != graph.node_graph_.cend();
+         node_ite++) {
+      auto curr_node = node_ite->second;
+      for (auto edge_ite = curr_node->in_edges_.cbegin(); edge_ite != curr_node->in_edges_.cend();
+           edge_ite++) {
+        auto curr_edge = *edge_ite;
+
+        // Convert the edge's weak pointer reference of node into a shared pointer to access the
+        // node's value
+        std::shared_ptr<Node> src = curr_edge->src_.lock();
+        std::shared_ptr<Node> dst = curr_edge->dst_.lock();
+        InsertEdge(src->value_, dst->value_, curr_edge->weight_);
+      }
+    }
+
+    return *this;
+  }
+}
+
+/**
+ * Move Assignment
+ */
+template <typename N, typename E>
+gdwg::Graph<N, E>& gdwg::Graph<N, E>::operator=(gdwg::Graph<N, E>&& graph) noexcept {
+
+  if (this == &graph) {
+    return *this;
+  } else {
+    this->Clear();
+
+    // Move the map pointer from graph to the constructed graph
+    this->node_graph_ = std::move(graph.node_graph_);
+  }
+
+  return *this;
+}
 
 //========================================================================
 // Methods
@@ -126,7 +179,7 @@ bool gdwg::Graph<N, E>::InsertEdge(const N& src, const N& dst, const E& w) {
  */
 template <typename N, typename E>
 void gdwg::Graph<N, E>::Clear() {
-  node_graph_.clear();
+  this->node_graph_.clear();
 }
 
 /* Checks if a node with the same value already exists in the graph or not

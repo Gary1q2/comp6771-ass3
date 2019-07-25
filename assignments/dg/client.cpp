@@ -31,8 +31,10 @@ int main() {
     g.InsertEdge("d", "f", "thqfee");
 
     std::cout << g << '\n';
-
-
+    gdwg::Graph<std::string, std::string> a;
+    a=g;
+    std::cout << a << '\n';
+    std::cout << (a==g) << '\n';
   /*
   g.InsertNode("are");
   g.InsertNode("you?");
