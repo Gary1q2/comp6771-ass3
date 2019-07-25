@@ -84,11 +84,10 @@ class Graph {
 
     auto unordered = curr_graph.node_graph_;
     std::map<N, std::shared_ptr<Node>> all_nodes(unordered.begin(), unordered.end());
-    std::cout << "Hi\n";
     for (auto element : all_nodes) {
       out_stream << element.first << " (\n";
       std::vector<std::shared_ptr<Edge>> all_edge(element.second->out_edges_.begin(),
-                                             element.second->out_edges_.end());
+                                                  element.second->out_edges_.end());
       /**
        * sort lamda function
        */
@@ -114,13 +113,13 @@ class Graph {
       for (auto edge : all_edge) {
         try {
           auto dst_node = edge->dst_.lock();
-          out_stream << dst_node->value_ << " | ";
+          out_stream << "  " << dst_node->value_ << " | ";
           out_stream << edge->weight_ << "\n";
         } catch (std::bad_weak_ptr &b) {
           out_stream << "BAD weak_ptr \n ";
         }
       }
-      out_stream << ")\n\n";
+      out_stream << ")\n";
     }
     return out_stream;
   }
@@ -215,11 +214,11 @@ class Graph {
 
   // Compares if two graphs are not the same or are
   friend bool operator!=(const gdwg::Graph<N, E>& graph1, const gdwg::Graph<N, E>& graph2) {
-      
-      // Use the friend operator== and just negate the value
-      return !(graph1 == graph2);
+
+    // Use the friend operator== and just negate the value
+    return !(graph1 == graph2);
   }
-  
+
  private:
   struct Edge;  // Defining Edge struct here so it can be included in the Node class
 
@@ -241,9 +240,9 @@ class Graph {
     }
 
     // Variables
-    N value_;                                               // Value of the node
-    std::unordered_set<std::shared_ptr<Edge>> in_edges_;    // Edges that go into this node
-    std::unordered_set<std::shared_ptr<Edge>> out_edges_;   // Edges that go AWAY from this node
+    N value_;                                              // Value of the node
+    std::unordered_set<std::shared_ptr<Edge>> in_edges_;   // Edges that go into this node
+    std::unordered_set<std::shared_ptr<Edge>> out_edges_;  // Edges that go AWAY from this node
   };
 
   // Edge class
