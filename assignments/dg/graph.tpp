@@ -34,10 +34,10 @@ gdwg::Graph<N, E>::Graph(typename std::vector<std::tuple<N, N, E>>::const_iterat
 template <typename N, typename E>
 gdwg::Graph<N, E>::Graph(std::initializer_list<N> list) {
 
-    // Iterate through list and add the nodes
-    for (auto ite = list.begin(); ite != list.end(); ite++) {
-        InsertNode(*ite);
-    }
+  // Iterate through list and add the nodes
+  for (auto ite = list.begin(); ite != list.end(); ite++) {
+    InsertNode(*ite);
+  }
 }
 
 /* Copy constructor
@@ -45,33 +45,35 @@ gdwg::Graph<N, E>::Graph(std::initializer_list<N> list) {
 template <typename N, typename E>
 gdwg::Graph<N, E>::Graph(const Graph<N, E>& graph) {
 
-    // Add all the nodes from the graph into the newly constructed graph
-    for (auto ite = graph.node_graph_.cbegin(); ite != graph.node_graph_.cend(); ite++) {
-        InsertNode(ite->first);
-    }
+  // Add all the nodes from the graph into the newly constructed graph
+  for (auto ite = graph.node_graph_.cbegin(); ite != graph.node_graph_.cend(); ite++) {
+    InsertNode(ite->first);
+  }
 
-    // Iterate through all the edges in all the nodes and add all the edges
-    for (auto node_ite = graph.node_graph_.cbegin(); node_ite != graph.node_graph_.cend(); node_ite++) {
-        auto curr_node = node_ite->second;
-        for (auto edge_ite = curr_node->in_edges_.cbegin(); edge_ite != curr_node->in_edges_.cend(); edge_ite++) {
-            auto curr_edge = *edge_ite;
+  // Iterate through all the edges in all the nodes and add all the edges
+  for (auto node_ite = graph.node_graph_.cbegin(); node_ite != graph.node_graph_.cend();
+       node_ite++) {
+    auto curr_node = node_ite->second;
+    for (auto edge_ite = curr_node->in_edges_.cbegin(); edge_ite != curr_node->in_edges_.cend();
+         edge_ite++) {
+      auto curr_edge = *edge_ite;
 
-            // Convert the edge's weak pointer reference of node into a shared pointer to access the node's value
-            std::shared_ptr<Node> src = curr_edge->src_.lock();
-            std::shared_ptr<Node> dst = curr_edge->dst_.lock();
-            InsertEdge(src->value_, dst->value_, curr_edge->weight_);
-        }
+      // Convert the edge's weak pointer reference of node into a shared pointer to access the
+      // node's value
+      std::shared_ptr<Node> src = curr_edge->src_.lock();
+      std::shared_ptr<Node> dst = curr_edge->dst_.lock();
+      InsertEdge(src->value_, dst->value_, curr_edge->weight_);
     }
+  }
 }
-
 
 /* Move constructor
  */
 template <typename N, typename E>
 gdwg::Graph<N, E>::Graph(Graph<N, E>&& graph) {
 
-    // Move the map pointer from graph to the constructed graph
-    node_graph_ = std::move(graph.node_graph_);
+  // Move the map pointer from graph to the constructed graph
+  node_graph_ = std::move(graph.node_graph_);
 }
 
 //========================================================================
@@ -229,36 +231,36 @@ std::vector<N> gdwg::Graph<N, E>::GetConnected(const N& src) {
 template <typename N, typename E>
 std::vector<E> gdwg::Graph<N, E>::GetWeights(const N& src, const N& dst) {
 
-    // Throw exception if source or destination node don't exist
-    if (!IsNode(src) || !IsNode(dst)) {
-        throw std::out_of_range(
-            "Cannot call Graph::GetWeights if src or dst node don't exist in the graph");
+  // Throw exception if source or destination node don't exist
+  if (!IsNode(src) || !IsNode(dst)) {
+    throw std::out_of_range(
+        "Cannot call Graph::GetWeights if src or dst node don't exist in the graph");
+  }
+
+  // Iterate through source node's in_edge_ array and look for edges that connect to dst node
+  std::vector<E> result_vec;
+  for (auto ite = node_graph_[src]->in_edges_.cbegin(); ite != node_graph_[src]->in_edges_.cend();
+       ite++) {
+    auto edge = *ite;
+
+    // Edge connects to dst node so append it to the set
+    if (edge->GetSrcValue() == dst) {
+      result_vec.insert(result_vec.begin(), edge->weight_);
     }
+  }
 
-    // Iterate through source node's in_edge_ array and look for edges that connect to dst node
-    std::vector <E> result_vec;
-    for (auto ite = node_graph_[src]->in_edges_.cbegin(); ite != node_graph_[src]->in_edges_.cend();
-         ite++) {
-        auto edge = *ite;
+  // Iterate through source node's out_edge_ array and look for edges that connect to dst node
+  for (auto ite = node_graph_[src]->out_edges_.cbegin(); ite != node_graph_[src]->out_edges_.cend();
+       ite++) {
+    auto edge = *ite;
 
-        // Edge connects to dst node so append it to the set
-        if (edge->GetSrcValue() == dst) {
-            result_vec.insert(result_vec.begin(), edge->weight_);
-        }
+    // Edge connects to dst node so append it to the set
+    if (edge->GetDstValue() == dst) {
+      result_vec.insert(result_vec.begin(), edge->weight_);
     }
+  }
 
-    // Iterate through source node's out_edge_ array and look for edges that connect to dst node
-    for (auto ite = node_graph_[src]->out_edges_.cbegin(); ite != node_graph_[src]->out_edges_.cend(); ite++) {
-        auto edge = *ite;
-
-        // Edge connects to dst node so append it to the set
-        if (edge->GetDstValue() == dst) {
-            result_vec.insert(result_vec.begin(), edge->weight_);
-        }
-
-        // Sort vector and then return
-        sort(result_vec.begin(), result_vec.end());
-        return result_vec;
-    }
-     return result_vec;
+  // Sort vector and then return
+  sort(result_vec.begin(), result_vec.end());
+  return result_vec;
 }

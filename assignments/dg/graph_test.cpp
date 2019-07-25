@@ -817,7 +817,63 @@ SCENARIO("Outstream operator overloading") {
       REQUIRE(stream.str() == ans);
     }
   }
+/*
+  GIVEN("Test string graph") {
+    gdwg::Graph<std::string, int> g;
+    g.InsertNode("a");
+    g.InsertNode("b");
+    g.InsertNode("c");
+    g.InsertNode("e");
+    g.InsertNode("d");
+    g.InsertNode("g");
+    g.InsertNode("f");
 
+    g.InsertEdge("a", "b", -1);
+    g.InsertEdge("a", "c", 1);
+    g.InsertEdge(2, 4, 2);
+    g.InsertEdge(2, 4, -2);
+    g.InsertEdge(2, 4, -3);
+    g.InsertEdge(3, 6, -8);
+    g.InsertEdge(3, 2, 2);
+    g.InsertEdge(4, 1, -4);
+    g.InsertEdge(4, 5, 3);
+    g.InsertEdge(5, 2, 7);
+    g.InsertEdge(6, 2, 5);
+    g.InsertEdge(6, 3, 10);
+
+    THEN("Print out a correct graph (from assignment page)") {
+      std::stringstream stream;
+      stream << g;
+      std::string ans = "";
+      ans.append("1 (\n");
+      ans.append("  5 | -1\n");
+      ans.append(")\n");
+      ans.append("2 (\n");
+      ans.append("  1 | 1\n");
+      ans.append("  4 | -3\n");
+      ans.append("  4 | -2\n");
+      ans.append("  4 | 2\n");
+      ans.append(")\n");
+      ans.append("3 (\n");
+      ans.append("  2 | 2\n");
+      ans.append("  6 | -8\n");
+      ans.append(")\n");
+      ans.append("4 (\n");
+      ans.append("  1 | -4\n");
+      ans.append("  5 | 3\n");
+      ans.append(")\n");
+      ans.append("5 (\n");
+      ans.append("  2 | 7\n");
+      ans.append(")\n");
+      ans.append("6 (\n");
+      ans.append("  2 | 5\n");
+      ans.append("  3 | 10\n");
+      ans.append(")\n");
+      ans.append("7 (\n");
+      ans.append(")\n");
+      REQUIRE(stream.str() == ans);
+    }
+  }*/
 }
 
 SCENARIO("Testing friend operator== and operator!=") {
