@@ -817,63 +817,57 @@ SCENARIO("Outstream operator overloading") {
       REQUIRE(stream.str() == ans);
     }
   }
-/*
+
   GIVEN("Test string graph") {
-    gdwg::Graph<std::string, int> g;
+    gdwg::Graph<std::string, std::string> g;
+    g.InsertNode("d");
+    g.InsertNode("g");
+    g.InsertNode("f");
     g.InsertNode("a");
     g.InsertNode("b");
     g.InsertNode("c");
     g.InsertNode("e");
-    g.InsertNode("d");
-    g.InsertNode("g");
-    g.InsertNode("f");
 
-    g.InsertEdge("a", "b", -1);
-    g.InsertEdge("a", "c", 1);
-    g.InsertEdge(2, 4, 2);
-    g.InsertEdge(2, 4, -2);
-    g.InsertEdge(2, 4, -3);
-    g.InsertEdge(3, 6, -8);
-    g.InsertEdge(3, 2, 2);
-    g.InsertEdge(4, 1, -4);
-    g.InsertEdge(4, 5, 3);
-    g.InsertEdge(5, 2, 7);
-    g.InsertEdge(6, 2, 5);
-    g.InsertEdge(6, 3, 10);
+    g.InsertEdge("b", "c", "awo");
+    g.InsertEdge("c", "e", "thaee");
+    g.InsertEdge("a", "b", "abc");
+    g.InsertEdge("a", "b", "abcd");
+    g.InsertEdge("a", "b", "abid");
+    g.InsertEdge("a", "c", "two");
+    g.InsertEdge("e", "d", "thcee");
+    g.InsertEdge("g", "f", "thdee");
+    g.InsertEdge("d", "f", "thqfee");
 
     THEN("Print out a correct graph (from assignment page)") {
       std::stringstream stream;
       stream << g;
       std::string ans = "";
-      ans.append("1 (\n");
-      ans.append("  5 | -1\n");
+      ans.append("a (\n");
+      ans.append("  b | abc\n");
+      ans.append("  b | abcd\n");
+      ans.append("  b | abid\n");
+      ans.append("  c | two\n");
       ans.append(")\n");
-      ans.append("2 (\n");
-      ans.append("  1 | 1\n");
-      ans.append("  4 | -3\n");
-      ans.append("  4 | -2\n");
-      ans.append("  4 | 2\n");
+      ans.append("b (\n");
+      ans.append("  c | awo\n");
       ans.append(")\n");
-      ans.append("3 (\n");
-      ans.append("  2 | 2\n");
-      ans.append("  6 | -8\n");
+      ans.append("c (\n");
+      ans.append("  e | thaee\n");
       ans.append(")\n");
-      ans.append("4 (\n");
-      ans.append("  1 | -4\n");
-      ans.append("  5 | 3\n");
+      ans.append("d (\n");
+      ans.append("  f | thqfee\n");
       ans.append(")\n");
-      ans.append("5 (\n");
-      ans.append("  2 | 7\n");
+      ans.append("e (\n");
+      ans.append("  d | thcee\n");
       ans.append(")\n");
-      ans.append("6 (\n");
-      ans.append("  2 | 5\n");
-      ans.append("  3 | 10\n");
+      ans.append("f (\n");
       ans.append(")\n");
-      ans.append("7 (\n");
+      ans.append("g (\n");
+      ans.append("  f | thdee\n");
       ans.append(")\n");
       REQUIRE(stream.str() == ans);
     }
-  }*/
+  }
 }
 
 SCENARIO("Testing friend operator== and operator!=") {

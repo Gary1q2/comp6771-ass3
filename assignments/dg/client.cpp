@@ -11,29 +11,27 @@
 // Carter test 1
 int main() {
 
-    gdwg::Graph<int, int> g;
-    g.InsertNode(1);
-    g.InsertNode(2);
-    g.InsertNode(3);
-    g.InsertNode(4);
-    g.InsertNode(5);
-    g.InsertNode(6);
-    g.InsertNode(7);
+    gdwg::Graph<std::string, std::string> g;
+    g.InsertNode("d");
+    g.InsertNode("g");
+    g.InsertNode("f");
+    g.InsertNode("a");
+    g.InsertNode("b");
+    g.InsertNode("c");
+    g.InsertNode("e");
 
-    g.InsertEdge(1, 5, -1);
-    g.InsertEdge(2, 1, 1);
-    g.InsertEdge(2, 4, 2);
-    g.InsertEdge(2, 4, -2);
-    g.InsertEdge(2, 4, -3);
-    g.InsertEdge(3, 6, -8);
-    g.InsertEdge(3, 2, 2);
-    g.InsertEdge(4, 1, -4);
-    g.InsertEdge(4, 5, 3);
-    g.InsertEdge(5, 2, 7);
-    g.InsertEdge(6, 2, 5);
-    g.InsertEdge(6, 3, 10);
+    g.InsertEdge("b", "c", "awo");
+    g.InsertEdge("c", "e", "thaee");
+    g.InsertEdge("a", "b", "abc");
+    g.InsertEdge("a", "b", "abcd");
+    g.InsertEdge("a", "b", "abid");
+    g.InsertEdge("a", "c", "two");
+    g.InsertEdge("e", "d", "thcee");
+    g.InsertEdge("g", "f", "thdee");
+    g.InsertEdge("d", "f", "thqfee");
 
     std::cout << g << '\n';
+
 
   /*
   g.InsertNode("are");

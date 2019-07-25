@@ -84,6 +84,7 @@ class Graph {
 
     auto unordered = curr_graph.node_graph_;
     std::map<N, std::shared_ptr<Node>> all_nodes(unordered.begin(), unordered.end());
+
     for (auto element : all_nodes) {
       out_stream << element.first << " (\n";
       std::vector<std::shared_ptr<Edge>> all_edge(element.second->out_edges_.begin(),
@@ -101,11 +102,11 @@ class Graph {
                     auto v1 = e1->value_;
                     auto v2 = e2->value_;
                     if (v1 == v2) {
-                      flag = (m1->weight_ < m2->weight_);
+                      flag = ((m1->weight_) < (m2->weight_));
                     } else {
                       flag = (v1 < v2);
                     }
-                  } catch (std::bad_weak_ptr &b) {
+                  } catch (std::bad_weak_ptr& b) {
                     std::cout << "BAD weak_ptr \n ";
                   }
                   return flag;
@@ -115,7 +116,7 @@ class Graph {
           auto dst_node = edge->dst_.lock();
           out_stream << "  " << dst_node->value_ << " | ";
           out_stream << edge->weight_ << "\n";
-        } catch (std::bad_weak_ptr &b) {
+        } catch (std::bad_weak_ptr& b) {
           out_stream << "BAD weak_ptr \n ";
         }
       }
