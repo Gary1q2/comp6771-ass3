@@ -134,8 +134,36 @@ gdwg::Graph<N, E>& gdwg::Graph<N, E>::operator=(gdwg::Graph<N, E>&& graph) noexc
 }
 
 //========================================================================
-// Methods
+//                                Methods
 //========================================================================
+
+/**
+ *Deletes a given node and all its associated incoming and outgoing edges. This function does
+ *nothing if the node that is to be deleted does not exist in the graph. Hint: if you are using weak
+ *ptrs for edges you may be able to do this quite simply. This function returns an boolean as to
+ *whether the item has been removed or not (true if removed).
+ */
+template <typename N, typename E>
+bool gdwg::Graph<N, E>::DeleteNode(const N& my_node) noexcept {
+  if (IsNode(my_node)) {
+    return;
+  }
+  std::unordered_map<N, std::shared_ptr<Node>> all_nodes = Get_all_nodes();
+  std::shared_ptr<node> curr_node = all_nodes.at(my_node);
+
+  for (auto curr_edge : curr_node->in_edges_) {
+    shared_ptr<Node> src_Node = curr_edge->src_.lock();
+    shared_ptr<Node> dst_Node = edge->dst_.lock();
+    deleteEdge(src->val, dst->val, edge->w);
+  }
+  for (auto edge : node->outEdges) {
+
+    shared_ptr<Node> src = edge->src.lock();
+    shared_ptr<Node> dst = edge->dst.lock();
+    deleteEdge(src->val, dst->val, edge->w);
+  }
+  nodes.erase(n);
+}
 
 /* Inserts a new node into the graph if it doesn't already exist
  */
