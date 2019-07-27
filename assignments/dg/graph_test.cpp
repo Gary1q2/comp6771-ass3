@@ -620,6 +620,7 @@ SCENARIO("Testing InsertEdge()") {
     }
   }
 }
+/*
 SCENARIO("Testing DeleteNode()") {
   GIVEN("An empty graph") {
     gdwg::Graph<std::string, int> graph;
@@ -651,12 +652,12 @@ SCENARIO("Testing DeleteNode()") {
     graph.InsertEdge("bye", "hi", 3);
     graph.InsertEdge("bye", "hi", 2);
     WHEN("Delete all 2 Node in the graph") {
-      //REQUIRE(graph.DeleteNode("hello") == false);
-      //REQUIRE(graph.DeleteNode("bye") == true);
-      //REQUIRE(graph.DeleteNode("hi") == true);
+      REQUIRE(graph.DeleteNode("hello") == false);
+      REQUIRE(graph.DeleteNode("bye") == true);
+      REQUIRE(graph.DeleteNode("hi") == true);
       THEN("Graph will become empty") {
         gdwg::Graph<std::string, int> res;
-        //REQUIRE(graph == res);
+        REQUIRE(graph == res);
       }
     }
   }
@@ -744,8 +745,8 @@ SCENARIO("Testing DeleteNode()") {
       }
     }
   }
-}
-
+}*/
+/*
 SCENARIO("Testing Replace()") {
   GIVEN("An empty graph") {
     gdwg::Graph<std::string, int> graph;
@@ -875,6 +876,7 @@ SCENARIO("Testing Replace()") {
     }
   }
 }
+ */
 SCENARIO("Testing Clear()") {
   GIVEN("An empty graph") {
     gdwg::Graph<std::string, int> graph;
@@ -1484,12 +1486,3 @@ SCENARIO("Testing friend operator== and operator!=") {
     }
   }
 }
-
-//============================================================
-// Helper methods
-//============================================================
-SCENARIO("Testing GetEdgeDst() custom method in Node datatype") {}
-
-SCENARIO("Testing GetSrcValue() custom method in Edge datatype") {}
-
-SCENARIO("Testing GetDstValue() custom method in Edge datatype") {}
