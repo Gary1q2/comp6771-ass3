@@ -235,6 +235,7 @@ bool gdwg::Graph<N, E>::DeleteNode(const N& my_node) noexcept {
   this->node_graph_.erase(my_node);
   return true;
 }
+
 /**
  * Replaces the original data, oldData, stored at this particular node by the replacement data,
  * newData. This function returns false if a node that contains value newData already exists in the
