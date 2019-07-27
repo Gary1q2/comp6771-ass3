@@ -266,11 +266,12 @@ bool gdwg::Graph<N, E>::Replace(const N& oldData, const N& newData) {
       InsertEdge();
     }
   */
-
+/*
   auto nodeHandler = this->node_graph_.extract(oldData);
   nodeHandler.key() = newData;
   this->node_graph_.insert(std::move(nodeHandler));
   return true;
+  */
 }
 /* Removes all nodes and edges from the graph
  */
