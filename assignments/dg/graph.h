@@ -50,7 +50,9 @@ class Graph {
   //============================================================
   // Methods
   //============================================================
+  // Delete a Node from a graph
   bool DeleteNode(const N& my_node) noexcept;
+
   // Adds a node to the graph
   bool InsertNode(const N& val);
 

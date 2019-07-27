@@ -145,24 +145,58 @@ gdwg::Graph<N, E>& gdwg::Graph<N, E>::operator=(gdwg::Graph<N, E>&& graph) noexc
  */
 template <typename N, typename E>
 bool gdwg::Graph<N, E>::DeleteNode(const N& my_node) noexcept {
-  if (IsNode(my_node)) {
-    return;
+  if (!IsNode(my_node)) {
+    return false;
   }
-  std::unordered_map<N, std::shared_ptr<Node>> all_nodes = Get_all_nodes();
-  std::shared_ptr<node> curr_node = all_nodes.at(my_node);
 
-  for (auto curr_edge : curr_node->in_edges_) {
-    shared_ptr<Node> src_Node = curr_edge->src_.lock();
-    shared_ptr<Node> dst_Node = edge->dst_.lock();
-    deleteEdge(src->val, dst->val, edge->w);
-  }
-  for (auto edge : node->outEdges) {
+  std::unordered_map<N, std::shared_ptr<Node>> all_nodes = this->node_graph_;
+  try {
+    std::shared_ptr<Node> curr_Node = all_nodes.at(my_node);
 
-    shared_ptr<Node> src = edge->src.lock();
-    shared_ptr<Node> dst = edge->dst.lock();
-    deleteEdge(src->val, dst->val, edge->w);
+    // iterate through in edge and delete the edge
+    for (auto curr_edge : curr_Node->in_edges_) {
+      try {
+        std::shared_ptr<Node> src_Node = curr_edge->src_.lock();
+        std::shared_ptr<Node> dst_Node = curr_edge->dst_.lock();
+        // Check if the edge connect to correct corect node
+        if (!IsNode(src_Node->value_) || !IsNode(dst_Node->value_)) {
+          continue;
+        } else {
+          if (dst_Node == curr_Node) {
+            src_Node->out_edges_.erase(curr_edge);
+            dst_Node->in_edges_.erase(curr_edge);
+          }
+        }
+
+      } catch (std::bad_weak_ptr& b) {
+        std::cout << "BAD weak_ptr \n ";
+      }
+    }
+    // iterate through out edge and delete the edge
+    for (auto curr_edge : curr_Node->out_edges_) {
+
+      try {
+        std::shared_ptr<Node> src_Node = curr_edge->src_.lock();
+        std::shared_ptr<Node> dst_Node = curr_edge->dst_.lock();
+        // Check if the edge connect to correct corect node
+        if (!IsNode(src_Node->value_) || !IsNode(dst_Node->value_)) {
+          continue;
+        } else {
+          if (src_Node == curr_Node) {
+            dst_Node->in_edges_.erase(curr_edge);
+            src_Node->out_edges_.erase(curr_edge);
+          }
+        }
+      } catch (std::bad_weak_ptr& b) {
+        std::cout << "BAD weak_ptr \n ";
+      }
+    }
+  } catch (const std::out_of_range& e) {
+    std::cout << "Exception at " << e.what() << std::endl;
   }
-  nodes.erase(n);
+
+  this->node_graph_.erase(my_node);
+  return true;
 }
 
 /* Inserts a new node into the graph if it doesn't already exist

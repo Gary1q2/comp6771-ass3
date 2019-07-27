@@ -620,7 +620,89 @@ SCENARIO("Testing InsertEdge()") {
     }
   }
 }
-
+SCENARIO("Testing DeleteNode()") {
+  GIVEN("An empty graph") {
+    gdwg::Graph<std::string, int> graph;
+    WHEN("Delete not existed Node") {
+      THEN("Graph do nothing and return false") {
+        REQUIRE(graph.DeleteNode("hello") == false);
+        gdwg::Graph<std::string, int> res;
+        REQUIRE(graph == res);
+      }
+    }
+  }
+  GIVEN("An graph contain 1 element") {
+    std::vector<std::string> vec{"hello"};
+    gdwg::Graph<std::string, int> graph{vec.begin(), vec.end()};
+    WHEN("Delete the only Node in the graph") {
+      REQUIRE(graph.DeleteNode("hello") == true);
+      THEN("Graph will become empty") {
+        gdwg::Graph<std::string, int> res;
+        REQUIRE(graph == res);
+      }
+    }
+  }
+  GIVEN("An graph contain 2 Node and 4 edges") {
+    gdwg::Graph<std::string, int> graph;
+    graph.InsertNode("hi");
+    graph.InsertNode("bye");
+    graph.InsertEdge("hi", "bye", 3);
+    graph.InsertEdge("hi", "bye", 2);
+    graph.InsertEdge("bye", "hi", 3);
+    graph.InsertEdge("bye", "hi", 2);
+    WHEN("Delete all 2 Node in the graph") {
+      REQUIRE(graph.DeleteNode("hello") == false);
+      REQUIRE(graph.DeleteNode("bye") == true);
+      REQUIRE(graph.DeleteNode("hi") == true);
+      THEN("Graph will become empty") {
+        gdwg::Graph<std::string, int> res;
+        REQUIRE(graph == res);
+      }
+    }
+  }
+  GIVEN("An graph contain 2 Node and 4 edges") {
+    gdwg::Graph<std::string, int> graph;
+    graph.InsertNode("hi");
+    graph.InsertNode("bye");
+    graph.InsertEdge("hi", "bye", 3);
+    graph.InsertEdge("hi", "bye", 2);
+    graph.InsertEdge("bye", "hi", 3);
+    graph.InsertEdge("bye", "hi", 2);
+    WHEN("Delete 1 Node in the graph") {
+      REQUIRE(graph.DeleteNode("bye") == true);
+      THEN("Graph will become single node without any edge") {
+        gdwg::Graph<std::string, int> res;
+        res.InsertNode("hi");
+        REQUIRE(graph == res);
+      }
+    }
+  }
+  GIVEN("An graph contain 3 Node and 6 edges") {
+    gdwg::Graph<std::string, int> graph;
+    graph.InsertNode("hi");
+    graph.InsertNode("bye");
+    graph.InsertNode("yes");
+    graph.InsertEdge("hi", "bye", 3);
+    graph.InsertEdge("hi", "bye", 2);
+    graph.InsertEdge("bye", "hi", 3);
+    graph.InsertEdge("bye", "hi", 2);
+    graph.InsertEdge("bye", "yes", 5);
+    graph.InsertEdge("yes", "bye", 6);
+    graph.InsertEdge("yes", "hi", 7);
+    graph.InsertEdge("hi", "yes", 8);
+    WHEN("Delete 1 Node in the graph") {
+      REQUIRE(graph.DeleteNode("bye") == true);
+      THEN("Graph will become 2 Nodes") {
+        gdwg::Graph<std::string, int> res;
+        res.InsertNode("hi");
+        res.InsertNode("yes");
+        res.InsertEdge("hi", "yes", 8);
+        res.InsertEdge("yes", "hi", 7);
+        REQUIRE(graph == res);
+      }
+    }
+  }
+}
 SCENARIO("Testing Clear()") {
   GIVEN("An empty graph") {
     gdwg::Graph<std::string, int> graph;
@@ -1239,4 +1321,3 @@ SCENARIO("Testing GetEdgeDst() custom method in Node datatype") {}
 SCENARIO("Testing GetSrcValue() custom method in Edge datatype") {}
 
 SCENARIO("Testing GetDstValue() custom method in Edge datatype") {}
-
