@@ -137,6 +137,43 @@ gdwg::Graph<N, E>& gdwg::Graph<N, E>::operator=(gdwg::Graph<N, E>&& graph) noexc
 //                                Methods
 //========================================================================
 
+/* Inserts a new node into the graph if it doesn't already exist
+ */
+template <typename N, typename E>
+bool gdwg::Graph<N, E>::InsertNode(const N& val) {
+  // Check if node with same value already exists
+  if (IsNode(val)) {
+    return false;
+  }
+
+  // Create new node and insert into graph
+  node_graph_.insert({val, std::make_shared<Node>(val)});
+  return true;
+}
+
+/* Inserts an edge between two nodes in the graph
+ */
+template <typename N, typename E>
+bool gdwg::Graph<N, E>::InsertEdge(const N& src, const N& dst, const E& w) {
+
+  // Throw exception if source or destination node don't exist
+  if (!IsNode(src) || !IsNode(dst)) {
+    throw std::runtime_error(
+        "Cannot call Graph::InsertEdge when either src or dst node does not exist");
+  }
+
+  // Check if edge already exists
+  std::shared_ptr<Edge> existing_edge = node_graph_[src]->GetEdgeDst(dst, w);
+  if (existing_edge != nullptr) {
+    return false;
+  }
+
+  // Create and insert edge into graph
+  std::shared_ptr<Edge> edge = std::make_shared<Edge>(node_graph_[src], node_graph_[dst], w);
+  node_graph_[src]->out_edges_.insert(edge);
+  node_graph_[dst]->in_edges_.insert(edge);
+  return true;
+}
 /**
  *Deletes a given node and all its associated incoming and outgoing edges. This function does
  *nothing if the node that is to be deleted does not exist in the graph. Hint: if you are using weak
@@ -198,45 +235,40 @@ bool gdwg::Graph<N, E>::DeleteNode(const N& my_node) noexcept {
   this->node_graph_.erase(my_node);
   return true;
 }
-
-/* Inserts a new node into the graph if it doesn't already exist
+/**
+ * Replaces the original data, oldData, stored at this particular node by the replacement data,
+ * newData. This function returns false if a node that contains value newData already exists in the
+ * graph (with the graph unchanged) and true otherwise.
  */
 template <typename N, typename E>
-bool gdwg::Graph<N, E>::InsertNode(const N& val) {
-  // Check if node with same value already exists
-  if (IsNode(val)) {
+bool gdwg::Graph<N, E>::Replace(const N& oldData, const N& newData) {
+  if (!IsNode(oldData)) {
+    throw std::runtime_error("Cannot call Graph::Replace on a node that doesn't exist");
+  }
+  if (IsNode(newData)) {
     return false;
   }
+  /*
+    std::shared_ptr<Node> curr_node = this->node_graph_.at(oldData);
+    std::unordered_set<std::shared_ptr<Edge>> in_edges = curr_node->in_edges_;
+    std::unordered_set<std::shared_ptr<Edge>> out_edges = curr_node->out_edges_;
+    vector<pair<E, pair<N, N>>> graph_info;
 
-  // Create new node and insert into graph
-  node_graph_.insert({val, std::make_shared<Node>(val)});
+    for (N node : connect_node_vec) {
+      std::pair<N, E> item{N, GetWeights()};
+      graph_info.push_back(make_pair(2, make_pair(31, 102)));
+    }
+
+    tmp_graph.insert DeleteNode(oldData);
+    InsertNode(newData);
+    for (N node : connect_node_vec) {
+      InsertEdge();
+    }
+  */
+  auto iter = this->node_graph_.find(oldData);
+  iter->second->value_ = newData;
   return true;
 }
-
-/* Inserts an edge between two nodes in the graph
- */
-template <typename N, typename E>
-bool gdwg::Graph<N, E>::InsertEdge(const N& src, const N& dst, const E& w) {
-
-  // Throw exception if source or destination node don't exist
-  if (!IsNode(src) || !IsNode(dst)) {
-    throw std::runtime_error(
-        "Cannot call Graph::InsertEdge when either src or dst node does not exist");
-  }
-
-  // Check if edge already exists
-  std::shared_ptr<Edge> existing_edge = node_graph_[src]->GetEdgeDst(dst, w);
-  if (existing_edge != nullptr) {
-    return false;
-  }
-
-  // Create and insert edge into graph
-  std::shared_ptr<Edge> edge = std::make_shared<Edge>(node_graph_[src], node_graph_[dst], w);
-  node_graph_[src]->out_edges_.insert(edge);
-  node_graph_[dst]->in_edges_.insert(edge);
-  return true;
-}
-
 /* Removes all nodes and edges from the graph
  */
 template <typename N, typename E>

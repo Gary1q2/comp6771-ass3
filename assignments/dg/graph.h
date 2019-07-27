@@ -53,6 +53,9 @@ class Graph {
   // Delete a Node from a graph
   bool DeleteNode(const N& my_node) noexcept;
 
+  // Replace the data in the graph
+  bool Replace(const N& oldData, const N& newData);
+
   // Adds a node to the graph
   bool InsertNode(const N& val);
 
@@ -242,6 +245,7 @@ class Graph {
       }
       return nullptr;
     }
+    void change_value(const N& v) { value_ = v; }
 
     // Variables
     N value_;                                              // Value of the node
