@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <map>
 
 // Change this back to absolute path, only for IDE
 //#include "assignments/dg/graph.h"

@@ -284,9 +284,6 @@ class Graph {
   //============================================================
   // Helper function
   //============================================================
-  std::unordered_map<N, std::shared_ptr<Node>> Get_all_nodes() const noexcept {
-    return this->node_graph_;
-  }
 };
 
 }  // namespace gdwg
