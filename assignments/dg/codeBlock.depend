@@ -1,9 +1,10 @@
 # depslib dependency file v1.0
-1563978555 source:c:\users\chine\desktop\comp6771-ass3\assignments\dg\graph_test.cpp
+1564275819 source:c:\users\chine\desktop\comp6771-ass3\assignments\dg\graph_test.cpp
 	"catch.h"
 	"graph.h"
+	<sstream>
 
-1563979764 c:\users\chine\desktop\comp6771-ass3\assignments\dg\graph.h
+1564276426 c:\users\chine\desktop\comp6771-ass3\assignments\dg\graph.h
 	<algorithm>
 	<exception>
 	<iostream>
@@ -14,12 +15,12 @@
 	<vector>
 	"graph.tpp"
 
-1563978600 c:\users\chine\desktop\comp6771-ass3\assignments\dg\graph.tpp
+1564277463 c:\users\chine\desktop\comp6771-ass3\assignments\dg\graph.tpp
 
-1563616798 c:\users\chine\desktop\comp6771-ass3\assignments\dg\catch.h
+1564271551 c:\users\chine\desktop\comp6771-ass3\assignments\dg\catch.h
 	"catch.hpp"
 
-1563616340 c:\users\chine\desktop\comp6771-ass3\assignments\dg\catch.hpp
+1564271551 c:\users\chine\desktop\comp6771-ass3\assignments\dg\catch.hpp
 	<TargetConditionals.h>
 	<ciso646>
 	<iosfwd>
@@ -487,6 +488,12 @@
 1564234293 c:\users\chine\desktop\6771\comp6771-ass3\assignments\dg\graph.tpp
 
 1564220720 source:c:\users\chine\desktop\6771\comp6771-ass3\assignments\dg\client.cpp
+	<iostream>
+	<string>
+	<map>
+	"graph.h"
+
+1564276038 source:c:\users\chine\desktop\comp6771-ass3\assignments\dg\client.cpp
 	<iostream>
 	<string>
 	<map>

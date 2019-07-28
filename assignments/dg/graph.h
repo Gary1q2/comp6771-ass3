@@ -62,7 +62,7 @@ class Graph {
 
   // Replace the data in the graph
   bool Replace(const N& oldData, const N& newData);
-  
+
   // Removes all nodes and edges from the graph
   void Clear() noexcept;
 
@@ -133,7 +133,8 @@ class Graph {
   }
 
   // Compares if two graphs are the same or not
-  friend bool operator==(const gdwg::Graph<N, E>& graph1, const gdwg::Graph<N, E>& graph2) noexcept {
+  friend bool operator==(const gdwg::Graph<N, E>& graph1,
+                         const gdwg::Graph<N, E>& graph2) noexcept {
 
     // Check if maps are the same size
     if (graph1.node_graph_.size() != graph2.node_graph_.size()) {
@@ -221,7 +222,8 @@ class Graph {
   }
 
   // Compares if two graphs are not the same or are
-  friend bool operator!=(const gdwg::Graph<N, E>& graph1, const gdwg::Graph<N, E>& graph2) noexcept {
+  friend bool operator!=(const gdwg::Graph<N, E>& graph1,
+                         const gdwg::Graph<N, E>& graph2) noexcept {
 
     // Use the friend operator== and just negate the value
     return !(graph1 == graph2);
@@ -251,7 +253,7 @@ class Graph {
     // Variables
     N value_;                                              // Value of the node
     std::unordered_set<std::shared_ptr<Edge>> in_edges_;   // Edges that go into this node
-    std::unordered_set<std::shared_ptr<Edge>> out_edges_;  // Edges that go AWAY from this node
+    std::unordered_set<std::shared_ptr<Edge>> out_edges_;  // Edges that go AWAY from this nodeAAAAP
   };
 
   // Edge class
@@ -263,19 +265,20 @@ class Graph {
 
     // Return the source node's value
     N GetSrcValue() const {
-       if (src_ == nullptr) {
-            throw "Edge destination can't be null";
-        }
-      std::shared_ptr <Node> p = src_.lock();
+
+      //if (src_ == nullptr) {
+        //throw "Edge destination can't be null";
+      //}
+      std::shared_ptr<Node> p = src_.lock();
       return p->value_;
     }
 
     // Return the destination node's value
     N GetDstValue() const {
-        if (dst_ == nullptr) {
-            throw "Edge destination can't be null";
-        }
-      std::shared_ptr <Node> p = dst_.lock();
+      //if (dst_ == nullptr) {
+        //throw "Edge destination can't be null";
+      //}
+      std::shared_ptr<Node> p = dst_.lock();
       return p->value_;
     }
 

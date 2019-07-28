@@ -196,15 +196,18 @@ bool gdwg::Graph<N, E>::DeleteNode(const N& my_node) noexcept {
         std::shared_ptr<Node> src_Node = curr_edge->src_.lock();
         std::shared_ptr<Node> dst_Node = curr_edge->dst_.lock();
         // Check if the edge connect to correct corect node
-        
+
         if (!IsNode(src_Node->value_) || !IsNode(dst_Node->value_)) {
           continue;
         } else {
-          
+
           if (dst_Node == curr_Node) {
-              std::cout << "node  src = " << src_Node->value_   << "    dst = " << dst_Node->value_ << "\n";
-            src_Node->out_edges_.erase(curr_edge);
-            dst_Node->in_edges_.erase(curr_edge);
+            std::cout << "node  src = " << src_Node->value_ << "    dst = " << dst_Node->value_
+                      << "\n";
+            if (src_Node->out_edges_.count(curr_edge) != 0)
+              src_Node->out_edges_.erase(curr_edge);
+            //if (dst_Node->in_edges_.count(curr_edge) != 0)
+            // dst_Node->in_edges_.erase(curr_edge);
           }
         }
 
@@ -213,7 +216,7 @@ bool gdwg::Graph<N, E>::DeleteNode(const N& my_node) noexcept {
       }
     }
     // iterate through out edge and delete the edge
-    
+
     for (auto curr_edge : curr_Node->out_edges_) {
 
       try {
@@ -224,8 +227,10 @@ bool gdwg::Graph<N, E>::DeleteNode(const N& my_node) noexcept {
           continue;
         } else {
           if (src_Node == curr_Node) {
-            dst_Node->in_edges_.erase(curr_edge);
-            src_Node->out_edges_.erase(curr_edge);
+            if (dst_Node->in_edges_.count(curr_edge) != 0)
+              dst_Node->in_edges_.erase(curr_edge);
+            //if (src_Node->out_edges_.count(curr_edge) != 0)
+            // src_Node->out_edges_.erase(curr_edge);
           }
         }
       } catch (std::bad_weak_ptr& b) {
@@ -271,13 +276,13 @@ bool gdwg::Graph<N, E>::Replace(const N& oldData, const N& newData) {
       InsertEdge();
     }
   */
-/*
-  auto nodeHandler = this->node_graph_.extract(oldData);
-  nodeHandler.key() = newData;
-  this->node_graph_.insert(std::move(nodeHandler));
-  
-  */
-return true;
+  /*
+    auto nodeHandler = this->node_graph_.extract(oldData);
+    nodeHandler.key() = newData;
+    this->node_graph_.insert(std::move(nodeHandler));
+
+    */
+  return true;
 }
 /* Removes all nodes and edges from the graph
  */
@@ -363,15 +368,15 @@ std::vector<N> gdwg::Graph<N, E>::GetConnected(const N& src) const {
 
   // Iterate through each inward edge on source node and append the other connected node
   std::unordered_set<N> result_set;
-  for (auto ite = node_graph_.at(src)->in_edges_.cbegin(); ite != node_graph_.at(src)->in_edges_.cend();
-       ite++) {
+  for (auto ite = node_graph_.at(src)->in_edges_.cbegin();
+       ite != node_graph_.at(src)->in_edges_.cend(); ite++) {
     auto edge = *ite;
     result_set.insert(edge->GetSrcValue());
   }
 
   // Iterate through each outward edge on source node and append the destination node
-  for (auto ite = node_graph_.at(src)->out_edges_.cbegin(); ite != node_graph_.at(src)->out_edges_.cend();
-       ite++) {
+  for (auto ite = node_graph_.at(src)->out_edges_.cbegin();
+       ite != node_graph_.at(src)->out_edges_.cend(); ite++) {
     auto edge = *ite;
     result_set.insert(edge->GetDstValue());
   }
@@ -396,8 +401,8 @@ std::vector<E> gdwg::Graph<N, E>::GetWeights(const N& src, const N& dst) const {
 
   // Iterate through source node's in_edge_ array and look for edges that connect to dst node
   std::vector<E> result_vec;
-  for (auto ite = node_graph_.at(src)->in_edges_.cbegin(); ite != node_graph_.at(src)->in_edges_.cend();
-       ite++) {
+  for (auto ite = node_graph_.at(src)->in_edges_.cbegin();
+       ite != node_graph_.at(src)->in_edges_.cend(); ite++) {
     auto edge = *ite;
 
     // Edge connects to dst node so append it to the set
@@ -407,8 +412,8 @@ std::vector<E> gdwg::Graph<N, E>::GetWeights(const N& src, const N& dst) const {
   }
 
   // Iterate through source node's out_edge_ array and look for edges that connect to dst node
-  for (auto ite = node_graph_.at(src)->out_edges_.cbegin(); ite != node_graph_.at(src)->out_edges_.cend();
-       ite++) {
+  for (auto ite = node_graph_.at(src)->out_edges_.cbegin();
+       ite != node_graph_.at(src)->out_edges_.cend(); ite++) {
     auto edge = *ite;
 
     // Edge connects to dst node so append it to the set

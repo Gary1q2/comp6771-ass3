@@ -620,7 +620,7 @@ SCENARIO("Testing InsertEdge()") {
     }
   }
 }
-/*
+
 SCENARIO("Testing DeleteNode()") {
   GIVEN("An empty graph") {
     gdwg::Graph<std::string, int> graph;
@@ -678,6 +678,7 @@ SCENARIO("Testing DeleteNode()") {
       }
     }
   }
+
   GIVEN("An graph contain 3 Node and 6 edges") {
     gdwg::Graph<std::string, int> graph;
     graph.InsertNode("hi");
@@ -745,7 +746,8 @@ SCENARIO("Testing DeleteNode()") {
       }
     }
   }
-}*/
+
+}
 /*
 SCENARIO("Testing Replace()") {
   GIVEN("An empty graph") {

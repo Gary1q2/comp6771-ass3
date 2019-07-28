@@ -10,46 +10,49 @@
 
 // Note: At the moment, there is no client.sampleout. Please do your own testing
 // Carter test 1
-int main() {
-/*
-    std::vector<std::string> vec{"hello"};
-    gdwg::Graph<std::string, int> graph{vec.begin(), vec.end()};
-    std::cout << graph;
-    graph.Replace("hello", "yes");
-    std::cout << graph;
+int main(){
 
-*/
-    gdwg::Graph<std::string, int> graph;
-    graph.InsertNode("hi");
-    graph.InsertNode("bye");
-    graph.InsertEdge("hi", "bye", 3);
-    graph.InsertEdge("hi", "bye", 2);
-    graph.InsertEdge("bye", "hi", 3);
-    graph.InsertEdge("bye", "hi", 2);
-    
-    std::cout << graph << "\n";
-    
-    
-    
-    gdwg::Graph<int, std::string> graph1;
-    graph1.InsertNode(4);
-    graph1.InsertNode(3);
-    graph1.InsertNode(7);
-    graph1.InsertEdge(3, 3, "lol");
-    graph1.InsertEdge(7, 7, "nooo");
-    graph1.InsertEdge(7, 7, "hey");
-    graph1.InsertEdge(7, 7, "nood");
-    std::cout << graph1 << "\n";
-    
-    //graph.DeleteNode("bye");
-    
-    //std::cout << "=====================\n";
-    //std::cout << graph << "\n";
+    gdwg::Graph<int, int> g;
+    g.InsertNode(1);
+    g.InsertNode(2);
+    g.InsertNode(3);
+    g.InsertNode(4);
+    g.InsertNode(5);
+    g.InsertNode(6);
+    g.InsertNode(7);
 
-    //gdwg::Graph<std::string, int> res;
-    //res.InsertNode("hi");
-    //REQUIRE(graph == res);
-   
-  
+    g.InsertEdge(1, 5, -1);
+    g.InsertEdge(2, 1, 1);
+    g.InsertEdge(2, 4, 2);
+    g.InsertEdge(2, 4, -2);
+    g.InsertEdge(2, 4, -3);
+    g.InsertEdge(3, 6, -8);
+    g.InsertEdge(3, 2, 2);
+    g.InsertEdge(4, 1, -4);
+    g.InsertEdge(4, 5, 3);
+    g.InsertEdge(5, 2, 7);
+    g.InsertEdge(6, 2, 5);
+    g.InsertEdge(6, 3, 10);
+
+    g.DeleteNode(2);
+    gdwg::Graph<int, int> res;
+    res.InsertNode(1);
+    res.InsertNode(3);
+    res.InsertNode(4);
+    res.InsertNode(5);
+    res.InsertNode(6);
+    res.InsertNode(7);
+    res.InsertEdge(4, 1, -4);
+    res.InsertEdge(4, 5, 3);
+    res.InsertEdge(1, 5, -1);
+    res.InsertEdge(3, 6, -8);
+    res.InsertEdge(6, 3, 10);
+    std::cout<< g;
+    std::cout<< res;
+    if (g == res)
+        std::cout<< "graph == res";
+
+
+
 
 }
