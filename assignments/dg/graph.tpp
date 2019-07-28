@@ -283,6 +283,39 @@ bool gdwg::Graph<N, E>::Replace(const N& oldData, const N& newData) {
 
   return true;
 }
+
+/**
+ * All instances of node oldData in the graph are replaced with instances of newData. After
+ * completing, every incoming and outgoing edge of oldData becomes an incoming/ougoing edge of
+ * newData, except that duplicate edges must be removed. Examples at the bottom of the table.
+ */
+template <typename N, typename E>
+void gdwg::Graph<N, E>::MergeReplace(const N& oldData, const N& newData) {
+  if (!IsNode(oldData) || !IsNode(newData)) {
+    throw std::runtime_error(
+        "Cannot call Graph::MergeReplace on old or new data if they don't exist in the graph");
+  }
+  std::shared_ptr<Node> curr_node = this->node_graph_.at(oldData);
+  std::unordered_map<N, E> in_edge_list;
+  for (std::shared_ptr<Edge> item : curr_node->in_edges_) {
+    std::shared_ptr<Node> tmp_node = item->src_.lock();
+    in_edge_list.insert(std::pair<N, E>{tmp_node->value_, item->weight_});
+  }
+  std::unordered_map<N, E> out_edge_list;
+  for (std::shared_ptr<Edge> item2 : curr_node->out_edges_) {
+    std::shared_ptr<Node> tmp_node = item2->dst_.lock();
+    out_edge_list.insert(std::pair<N, E>{tmp_node->value_, item2->weight_});
+  }
+  this->DeleteNode(oldData);
+  this->InsertNode(newData);
+  for (std::pair<N, E> dst : out_edge_list) {
+    this->InsertEdge(newData, dst.first, dst.second);
+  }
+  for (std::pair<N, E> src : in_edge_list) {
+    this->InsertEdge(src.first, newData, src.second);
+  }
+}
+
 /* Removes all nodes and edges from the graph
  */
 template <typename N, typename E>

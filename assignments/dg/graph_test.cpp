@@ -746,7 +746,6 @@ SCENARIO("Testing DeleteNode()") {
       }
     }
   }
-
 }
 
 SCENARIO("Testing Replace()") {
@@ -786,11 +785,11 @@ SCENARIO("Testing Replace()") {
     graph.InsertEdge("bye", "hi", 2);
     graph.InsertEdge("bye", "bye", 200);
     graph.InsertEdge("hi", "hi", 100);
-    gdwg::Graph<std::string, int> res1=graph;
-    WHEN("Delete 1 Node in the graph") {
-      REQUIRE(graph.Replace("hi","hi") == false);
+    gdwg::Graph<std::string, int> res1 = graph;
+    WHEN("Replace 1 Node in the graph") {
+      REQUIRE(graph.Replace("hi", "hi") == false);
       REQUIRE(res1 == graph);
-      REQUIRE(graph.Replace("bye","yes") == true);
+      REQUIRE(graph.Replace("bye", "yes") == true);
       THEN("Graph will replace bye with yes") {
         gdwg::Graph<std::string, int> res;
         res.InsertNode("hi");
@@ -830,10 +829,10 @@ SCENARIO("Testing Replace()") {
     g.InsertEdge(6, 2, 5);
     g.InsertEdge(6, 3, 10);
 
-    WHEN("Delete 1 Node in the graph") {
-      REQUIRE(g.Replace(2,7) == false);
-      REQUIRE(g.Replace(2,2) == false);
-      REQUIRE(g.Replace(2,10) == true);
+    WHEN("Replace 1 Node in the graph") {
+      REQUIRE(g.Replace(2, 7) == false);
+      REQUIRE(g.Replace(2, 2) == false);
+      REQUIRE(g.Replace(2, 10) == true);
       THEN("Graph will replaced") {
         gdwg::Graph<int, int> res;
         res.InsertNode(1);

@@ -63,6 +63,9 @@ class Graph {
   // Replace the data in the graph
   bool Replace(const N& oldData, const N& newData);
 
+  // Replace and merge the data in the graph
+  void MergeReplace(const N& oldData, const N& newData);
+
   // Removes all nodes and edges from the graph
   void Clear() noexcept;
 

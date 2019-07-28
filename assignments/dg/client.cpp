@@ -41,25 +41,34 @@ int main(){
     std::cout<< g;
 
 */
-
+/*
 
     gdwg::Graph<std::string, int> graph;
-    graph.InsertNode("hi");
-    graph.InsertNode("bye");
-    graph.InsertEdge("hi", "bye", 3);
-    graph.InsertEdge("hi", "bye", 2);
-    graph.InsertEdge("bye", "hi", 3);
-    graph.InsertEdge("bye", "hi", 2);
-    graph.InsertEdge("bye", "bye", 200);
-    graph.InsertEdge("hi", "hi", 100);
-    gdwg::Graph<std::string, int> res1=graph;
-    graph.Replace("hi","hi");
-
-
+    graph.InsertNode("A");
+    graph.InsertNode("B");
+    graph.InsertNode("C");
+    graph.InsertNode("D");
+    graph.InsertEdge("A", "B", 1);
+    graph.InsertEdge("A", "D", 3);
+    graph.InsertEdge("A", "C", 2);
 
     std::cout<< graph;
     std::cout<< "\n\n\n=============================Replace=============================\n\n\n";
-    graph.Replace("bye","yes");
+    graph.MergeReplace("A","B");
+    std::cout<< graph;
+*/
+    gdwg::Graph<std::string, int> graph;
+    graph.InsertNode("A");
+    graph.InsertNode("B");
+    graph.InsertNode("C");
+    graph.InsertNode("D");
+    graph.InsertEdge("A", "B", 3);
+    graph.InsertEdge("C", "B", 2);
+    graph.InsertEdge("D", "B", 4);
+
+    std::cout<< graph;
+    std::cout<< "\n\n\n=============================Replace=============================\n\n\n";
+    graph.MergeReplace("A","B");
     std::cout<< graph;
 
 }
