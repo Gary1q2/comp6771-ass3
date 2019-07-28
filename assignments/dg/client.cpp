@@ -11,7 +11,7 @@
 // Note: At the moment, there is no client.sampleout. Please do your own testing
 // Carter test 1
 int main(){
-
+/*
     gdwg::Graph<int, int> g;
     g.InsertNode(1);
     g.InsertNode(2);
@@ -37,13 +37,29 @@ int main(){
     g.InsertEdge(6, 3, 10);
     std::cout<< g;
     std::cout<< "\n\n\n=============================Replace=============================\n\n\n";
-    g.Replace(21,3);
+    g.Replace(2,10);
     std::cout<< g;
 
+*/
+
+
+    gdwg::Graph<std::string, int> graph;
+    graph.InsertNode("hi");
+    graph.InsertNode("bye");
+    graph.InsertEdge("hi", "bye", 3);
+    graph.InsertEdge("hi", "bye", 2);
+    graph.InsertEdge("bye", "hi", 3);
+    graph.InsertEdge("bye", "hi", 2);
+    graph.InsertEdge("bye", "bye", 200);
+    graph.InsertEdge("hi", "hi", 100);
+    gdwg::Graph<std::string, int> res1=graph;
+    graph.Replace("hi","hi");
 
 
 
-
-
+    std::cout<< graph;
+    std::cout<< "\n\n\n=============================Replace=============================\n\n\n";
+    graph.Replace("bye","yes");
+    std::cout<< graph;
 
 }

@@ -794,13 +794,13 @@ SCENARIO("Testing Replace()") {
       THEN("Graph will replace bye with yes") {
         gdwg::Graph<std::string, int> res;
         res.InsertNode("hi");
-        graph.InsertNode("yes");
-        graph.InsertEdge("hi", "yes", 3);
-        graph.InsertEdge("hi", "yes", 2);
-        graph.InsertEdge("yes", "hi", 3);
-        graph.InsertEdge("yes", "hi", 2);
-        graph.InsertEdge("yes", "yes", 200);
-        graph.InsertEdge("hi", "hi", 100);
+        res.InsertNode("yes");
+        res.InsertEdge("hi", "yes", 3);
+        res.InsertEdge("hi", "yes", 2);
+        res.InsertEdge("yes", "hi", 3);
+        res.InsertEdge("yes", "hi", 2);
+        res.InsertEdge("yes", "yes", 200);
+        res.InsertEdge("hi", "hi", 100);
 
         REQUIRE(graph == res);
       }

@@ -279,6 +279,7 @@ bool gdwg::Graph<N, E>::Replace(const N& oldData, const N& newData) {
   auto nodeHandler = this->node_graph_.extract(oldData);
   nodeHandler.key() = newData;
   this->node_graph_.insert(std::move(nodeHandler));
+  this->node_graph_[newData]->value_ = newData;
 
   return true;
 }
