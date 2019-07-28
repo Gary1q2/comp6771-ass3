@@ -258,23 +258,6 @@ bool gdwg::Graph<N, E>::Replace(const N& oldData, const N& newData) {
   if (IsNode(newData)) {
     return false;
   }
-  /*
-    std::shared_ptr<Node> curr_node = this->node_graph_.at(oldData);
-    std::unordered_set<std::shared_ptr<Edge>> in_edges = curr_node->in_edges_;
-    std::unordered_set<std::shared_ptr<Edge>> out_edges = curr_node->out_edges_;
-    vector<pair<E, pair<N, N>>> graph_info;
-
-    for (N node : connect_node_vec) {
-      std::pair<N, E> item{N, GetWeights()};
-      graph_info.push_back(make_pair(2, make_pair(31, 102)));
-    }
-
-    tmp_graph.insert DeleteNode(oldData);
-    InsertNode(newData);
-    for (N node : connect_node_vec) {
-      InsertEdge();
-    }
-  */
 
   auto nodeHandler = this->node_graph_.extract(oldData);
   nodeHandler.key() = newData;
@@ -295,24 +278,41 @@ void gdwg::Graph<N, E>::MergeReplace(const N& oldData, const N& newData) {
     throw std::runtime_error(
         "Cannot call Graph::MergeReplace on old or new data if they don't exist in the graph");
   }
+  // if old and new are same, do nothing
+  if (oldData == newData)
+    return;
+
+  // Get the node
   std::shared_ptr<Node> curr_node = this->node_graph_.at(oldData);
-  std::unordered_map<N, E> in_edge_list;
+  // store edges info of oldData Node
+  std::unordered_multimap<N, E> in_edge_list;
   for (std::shared_ptr<Edge> item : curr_node->in_edges_) {
     std::shared_ptr<Node> tmp_node = item->src_.lock();
     in_edge_list.insert(std::pair<N, E>{tmp_node->value_, item->weight_});
   }
-  std::unordered_map<N, E> out_edge_list;
+  std::unordered_multimap<N, E> out_edge_list;
   for (std::shared_ptr<Edge> item2 : curr_node->out_edges_) {
     std::shared_ptr<Node> tmp_node = item2->dst_.lock();
     out_edge_list.insert(std::pair<N, E>{tmp_node->value_, item2->weight_});
   }
+
+  // delete the node
   this->DeleteNode(oldData);
+  // restore the data
   this->InsertNode(newData);
   for (std::pair<N, E> dst : out_edge_list) {
-    this->InsertEdge(newData, dst.first, dst.second);
+    if (dst.first == oldData) {
+      this->InsertEdge(newData, newData, dst.second);
+    } else {
+      this->InsertEdge(newData, dst.first, dst.second);
+    }
   }
   for (std::pair<N, E> src : in_edge_list) {
-    this->InsertEdge(src.first, newData, src.second);
+    if (src.first == oldData) {
+      this->InsertEdge(newData, newData, src.second);
+    } else {
+      this->InsertEdge(src.first, newData, src.second);
+    }
   }
 }
 
