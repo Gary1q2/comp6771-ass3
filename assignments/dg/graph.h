@@ -266,8 +266,8 @@ class Graph {
     // Return the source node's value
     N GetSrcValue() const {
 
-      //if (src_ == nullptr) {
-        //throw "Edge destination can't be null";
+      // if (src_ == nullptr) {
+      // throw "Edge destination can't be null";
       //}
       std::shared_ptr<Node> p = src_.lock();
       return p->value_;
@@ -275,8 +275,8 @@ class Graph {
 
     // Return the destination node's value
     N GetDstValue() const {
-      //if (dst_ == nullptr) {
-        //throw "Edge destination can't be null";
+      // if (dst_ == nullptr) {
+      // throw "Edge destination can't be null";
       //}
       std::shared_ptr<Node> p = dst_.lock();
       return p->value_;

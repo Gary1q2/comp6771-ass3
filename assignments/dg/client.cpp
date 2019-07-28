@@ -25,6 +25,8 @@ int main(){
     g.InsertEdge(2, 1, 1);
     g.InsertEdge(2, 4, 2);
     g.InsertEdge(2, 4, -2);
+    g.InsertEdge(2, 2, -20);
+    g.InsertEdge(4, 4, -2);
     g.InsertEdge(2, 4, -3);
     g.InsertEdge(3, 6, -8);
     g.InsertEdge(3, 2, 2);
@@ -33,24 +35,13 @@ int main(){
     g.InsertEdge(5, 2, 7);
     g.InsertEdge(6, 2, 5);
     g.InsertEdge(6, 3, 10);
-
-    g.DeleteNode(2);
-    gdwg::Graph<int, int> res;
-    res.InsertNode(1);
-    res.InsertNode(3);
-    res.InsertNode(4);
-    res.InsertNode(5);
-    res.InsertNode(6);
-    res.InsertNode(7);
-    res.InsertEdge(4, 1, -4);
-    res.InsertEdge(4, 5, 3);
-    res.InsertEdge(1, 5, -1);
-    res.InsertEdge(3, 6, -8);
-    res.InsertEdge(6, 3, 10);
     std::cout<< g;
-    std::cout<< res;
-    if (g == res)
-        std::cout<< "graph == res";
+    std::cout<< "\n\n\n=============================Replace=============================\n\n\n";
+    g.Replace(21,3);
+    std::cout<< g;
+
+
+
 
 
 

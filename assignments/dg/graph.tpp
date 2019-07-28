@@ -202,11 +202,10 @@ bool gdwg::Graph<N, E>::DeleteNode(const N& my_node) noexcept {
         } else {
 
           if (dst_Node == curr_Node) {
-            std::cout << "node  src = " << src_Node->value_ << "    dst = " << dst_Node->value_
-                      << "\n";
+
             if (src_Node->out_edges_.count(curr_edge) != 0)
               src_Node->out_edges_.erase(curr_edge);
-            //if (dst_Node->in_edges_.count(curr_edge) != 0)
+            // if (dst_Node->in_edges_.count(curr_edge) != 0)
             // dst_Node->in_edges_.erase(curr_edge);
           }
         }
@@ -229,7 +228,7 @@ bool gdwg::Graph<N, E>::DeleteNode(const N& my_node) noexcept {
           if (src_Node == curr_Node) {
             if (dst_Node->in_edges_.count(curr_edge) != 0)
               dst_Node->in_edges_.erase(curr_edge);
-            //if (src_Node->out_edges_.count(curr_edge) != 0)
+            // if (src_Node->out_edges_.count(curr_edge) != 0)
             // src_Node->out_edges_.erase(curr_edge);
           }
         }
@@ -276,12 +275,11 @@ bool gdwg::Graph<N, E>::Replace(const N& oldData, const N& newData) {
       InsertEdge();
     }
   */
-  /*
-    auto nodeHandler = this->node_graph_.extract(oldData);
-    nodeHandler.key() = newData;
-    this->node_graph_.insert(std::move(nodeHandler));
 
-    */
+  auto nodeHandler = this->node_graph_.extract(oldData);
+  nodeHandler.key() = newData;
+  this->node_graph_.insert(std::move(nodeHandler));
+
   return true;
 }
 /* Removes all nodes and edges from the graph
