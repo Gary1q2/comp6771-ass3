@@ -73,7 +73,7 @@ int main(){
     std::cout<< graph;
 
 */
-
+/*
     gdwg::Graph<std::string, int> graph;
     graph.InsertNode("hi");
     graph.InsertNode("bye");
@@ -96,7 +96,7 @@ int main(){
     graph.Replace("hi", "bye");
     std::cout<< graph;
 
-
+*/
 
 
 

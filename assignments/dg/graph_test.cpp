@@ -1294,6 +1294,24 @@ SCENARIO("Testing GetWeights()") {
   }
 }
 
+SCENARIO("") {
+
+}
+
+SCENARIO("Testing all iterator functions begin(), cbegin(), crbegin() etc.") {
+    GIVEN("An empty graph") {
+        gdwg::Graph<std::string, int> graph;
+        for (auto ite = graph.begin(); )
+    }
+    
+    GIVEN("Graph with 1 node") {
+    
+    }
+    
+    GIVEN("Graph with 2 nodes and ")
+}
+
+
 //============================================================
 // Friends
 //============================================================

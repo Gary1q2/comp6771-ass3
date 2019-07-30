@@ -13,9 +13,180 @@
 namespace gdwg {
 template <typename N, typename E>
 class Graph {
- public:
-  class const_iterator {};
+ private:
+  
+  struct Edge;  // Defining Edge struct here so it can be included in the Node class
 
+  // Node class
+  struct Node {
+
+    // Node constructor
+    Node(const N& val) : value_{val} {}
+
+    // Checks if a given edge (destination and weight) exists from this node
+    std::shared_ptr<Edge> GetEdgeDst(const N& dst, const E& w) const noexcept {
+      for (const auto& edge : out_edges_) {
+        std::shared_ptr<Node> dest_node = edge->dst_.lock();
+        if ((dst == dest_node->value_) && (edge->weight_ == w)) {
+          return edge;
+        }
+      }
+      return nullptr;
+    }
+    void change_value(const N& v) noexcept { value_ = v; }
+
+    // Variables
+    N value_;                                              // Value of the node
+    std::unordered_set<std::shared_ptr<Edge>> in_edges_;   // Edges that go into this node
+    std::unordered_set<std::shared_ptr<Edge>> out_edges_;  // Edges that go AWAY from this nodeAAAAP
+  };
+
+  // Edge class
+  struct Edge {
+
+    // Edge constructor
+    Edge(std::shared_ptr<Node> src, std::shared_ptr<Node> dst, const E& w)
+      : src_{src}, dst_{dst}, weight_{w} {}
+    
+    // Return the source node's value
+    N GetSrcValue() const {
+      std::shared_ptr<Node> p = src_.lock();
+      return p->value_;
+    }
+
+    // Return the destination node's value
+    N GetDstValue() const {
+      std::shared_ptr<Node> p = dst_.lock();
+      return p->value_;
+    }
+
+    // Variables
+    std::weak_ptr<Node> src_;  // Node which the edge is coming from
+    std::weak_ptr<Node> dst_;  // Node which the edge is going to
+    E weight_;                 // Weight of the edge
+  };
+
+  // Map containing all the nodes in the graph
+  std::unordered_map<N, std::shared_ptr<Node>> node_graph_;
+  
+  
+  
+ public:
+  
+  class const_iterator {
+   public:
+    using iterator_category = std::bidirectional_iterator_tag;
+    using value_type = std::tuple<N, N, E>;
+    using reference = std::tuple<const N&, const N&, const E&>;
+    
+    // De-referencing iterator
+    reference operator*() const {
+        return {edge_->src_, edge_->dst_, edge_->weight_};
+    }
+    
+    // Pre-increment
+    const_iterator operator++() {
+        
+        // Iterate through nodes to find the next largest source node
+        for (auto node_ite = node_graph_.cbegin(); node_ite != node_graph_.cend(); node_ite++) {
+            auto node = *node_ite;
+            if (edge_->src_ >= node->value_) {
+                
+                // Sort this node's edges by their destination node and edge weight
+                std::vector<std::shared_ptr<Edge>> temp_list = node->out_edges_;
+                std::sort(temp_list.cbegin(), temp_list.cend(),
+                    [](const std::shared_ptr<Edge>& edge1, const std::shared_ptr<Edge>& edge2)->bool {
+                        std::shared_ptr<Node> node1 = edge1->dst_.lock();
+                        std::shared_ptr<Node> node2 = edge2->dst_.lock();
+                        if (node1->value_ == node2->value_) {
+                            return (edge1->weight_ < edge2->weight_);
+                        } else {
+                            return (node1->value_ < node2->value_);
+                        }
+                });
+                
+                // Iterate through the sorted edge list and look for the next edge
+                for (auto edge_ite = temp_list.cbegin(); edge_ite = temp_list.cend(); edge_ite++) {
+                    auto curr_edge = *edge_ite;
+                    if (curr_edge->dst_ == edge_->dst_) {
+                        if (curr_edge->weight_ > edge_->weight_) {
+                            edge_ = curr_edge;
+                            return *this;
+                        }
+                    } else if (curr_edge->dst_ > edge_->dst_) {
+                        edge_ = curr_edge;
+                        return *this;
+                    }
+                }
+            }
+        }
+        
+        // This means we reached the end of the graph
+        edge_ = nullptr;
+        return *this;
+    }
+    
+
+    // iterate through the list and compare if the current one is bigger or not :O REUTNR IF YES... if not... move on to next node
+    // if reach end of all ndoes.. we reached end of file
+    
+    
+    // Post-increment
+    const_iterator operator++(int) {
+        auto copy{*this};
+        ++(*this);
+        return copy;
+    }
+    
+    
+    // Pre-decrement
+    const_iterator operator--() {
+    
+    }
+    
+    // Post-decrement
+    const_iterator operator--(int) {
+        auto copy{*this};
+        --(*this);
+        return copy;
+    }
+    
+    // == operator
+    friend bool operator==(const const_iterator& edge1, const const_iterator& edge2) {
+        if ((edge1.GetSrcValue() == edge2.GetSrcValue()) &&
+            (edge1.GetDstValue() == edge2.GetDstValue()) &&
+            (edge1.weight_ == edge2.weight_)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    // != operator
+    friend bool operator!=(const const_iterator& edge1, const const_iterator& edge2) {
+        if ((edge1.GetSrcValue() == edge2.GetSrcValue()) &&
+            (edge1.GetDstValue() == edge2.GetDstValue()) &&
+            (edge1.weight_ == edge2.weight_)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
+   private:
+   
+    // Iterator constructor
+    explicit const_iterator(Edge* edge): edge_{edge} {};
+    Edge* edge_;
+    
+    friend class Graph;
+  };
+  
+  using iterator = const_iterator;
+
+  
+  
+  
   //============================================================
   // Constructors
   //============================================================
@@ -45,8 +216,13 @@ class Graph {
   //============================================================
   // Operations
   //============================================================
+  
+  // Copy assignment
   Graph<N, E>& operator=(const Graph<N, E>& orig) noexcept;
+  
+  // Move assignment
   Graph<N, E>& operator=(Graph<N, E>&& orig) noexcept;
+  
   //============================================================
   // Methods
   //============================================================
@@ -191,7 +367,6 @@ class Graph {
 
         // An edge in node1 was not found in node2 so return false
         if (!found) {
-          ;
           return false;
         }
       }
@@ -231,72 +406,6 @@ class Graph {
     // Use the friend operator== and just negate the value
     return !(graph1 == graph2);
   }
-
- private:
-  struct Edge;  // Defining Edge struct here so it can be included in the Node class
-
-  // Node class
-  struct Node {
-
-    // Node constructor
-    Node(const N& val) : value_{val} {}
-
-    // Checks if a given edge (destination and weight) exists from this node
-    std::shared_ptr<Edge> GetEdgeDst(const N& dst, const E& w) const noexcept {
-      for (const auto& edge : out_edges_) {
-        std::shared_ptr<Node> dest_node = edge->dst_.lock();
-        if ((dst == dest_node->value_) && (edge->weight_ == w)) {
-          return edge;
-        }
-      }
-      return nullptr;
-    }
-    void change_value(const N& v) noexcept { value_ = v; }
-
-    // Variables
-    N value_;                                              // Value of the node
-    std::unordered_set<std::shared_ptr<Edge>> in_edges_;   // Edges that go into this node
-    std::unordered_set<std::shared_ptr<Edge>> out_edges_;  // Edges that go AWAY from this nodeAAAAP
-  };
-
-  // Edge class
-  struct Edge {
-
-    // Edge constructor
-    Edge(std::shared_ptr<Node> src, std::shared_ptr<Node> dst, const E& w)
-      : src_{src}, dst_{dst}, weight_{w} {}
-
-    // Return the source node's value
-    N GetSrcValue() const {
-
-      // if (src_ == nullptr) {
-      // throw "Edge destination can't be null";
-      //}
-      std::shared_ptr<Node> p = src_.lock();
-      return p->value_;
-    }
-
-    // Return the destination node's value
-    N GetDstValue() const {
-      // if (dst_ == nullptr) {
-      // throw "Edge destination can't be null";
-      //}
-      std::shared_ptr<Node> p = dst_.lock();
-      return p->value_;
-    }
-
-    // Variables
-    std::weak_ptr<Node> src_;  // Node which the edge is coming from
-    std::weak_ptr<Node> dst_;  // Node which the edge is going to
-    E weight_;                 // Weight of the edge
-  };
-
-  // Map containing all the nodes in the graph
-  std::unordered_map<N, std::shared_ptr<Node>> node_graph_;
-
-  //============================================================
-  // Helper function
-  //============================================================
 };
 
 }  // namespace gdwg
