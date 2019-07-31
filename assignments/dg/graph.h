@@ -6,8 +6,8 @@
 #include <iostream>
 #include <map>
 #include <memory>
+#include <set>
 #include <unordered_map>
-#include <unordered_set>
 #include <vector>
 
 namespace gdwg {
@@ -36,9 +36,9 @@ class Graph {
     void change_value(const N& v) noexcept { value_ = v; }
 
     // Variables
-    N value_;                                              // Value of the node
-    std::unordered_set<std::shared_ptr<Edge>> in_edges_;   // Edges that go into this node
-    std::unordered_set<std::shared_ptr<Edge>> out_edges_;  // Edges that go AWAY from this nodeAAAAP
+    N value_;                                    // Value of the node
+    std::set<std::shared_ptr<Edge>> in_edges_;   // Edges that go into this node
+    std::set<std::shared_ptr<Edge>> out_edges_;  // Edges that go AWAY from this node
   };
 
   // Edge class
@@ -67,7 +67,7 @@ class Graph {
   };
 
   // Map containing all the nodes in the graph
-  std::unordered_map<N, std::shared_ptr<Node>> node_graph_;
+  std::map<N, std::shared_ptr<Node>> node_graph_;
   
   
   
@@ -76,7 +76,7 @@ class Graph {
   class const_iterator {
    public:
     std::map<N, std::shared_ptr<Node>>::iterator node_ite;
-    std::unordered_set
+    std::set
     
     
     using iterator_category = std::bidirectional_iterator_tag;

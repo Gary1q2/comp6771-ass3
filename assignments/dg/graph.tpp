@@ -186,7 +186,7 @@ bool gdwg::Graph<N, E>::DeleteNode(const N& my_node) noexcept {
     return false;
   }
 
-  std::unordered_map<N, std::shared_ptr<Node>> all_nodes = this->node_graph_;
+  std::map<N, std::shared_ptr<Node>> all_nodes = this->node_graph_;
   try {
     std::shared_ptr<Node> curr_Node = all_nodes.at(my_node);
 
@@ -399,7 +399,7 @@ std::vector<N> gdwg::Graph<N, E>::GetConnected(const N& src) const {
   }
 
   // Iterate through each inward edge on source node and append the other connected node
-  std::unordered_set<N> result_set;
+  std::set<N> result_set;
   for (auto ite = node_graph_.at(src)->in_edges_.cbegin();
        ite != node_graph_.at(src)->in_edges_.cend(); ite++) {
     auto edge = *ite;
