@@ -122,8 +122,8 @@ class Graph {
           // Iterate to next node while skipping nodes with no edges and not reaching the end
           do {
             node_ite_++;
-          } while (node_ite_ != sentinel_ && node_ite_->second->out_edges_.begin() == node_ite_->second->out_edges_.end());
-          if (node_ite_ != sentinel_) {
+          } while (node_ite_ != end_sentinel_ && node_ite_->second->out_edges_.begin() == node_ite_->second->out_edges_.end());
+          if (node_ite_ != end_sentinel_) {
             edge_ite_ = node_ite_->second->out_edges_.begin();
           }
         }
@@ -136,10 +136,35 @@ class Graph {
         ++(*this);
         return copy;
     }
-    /*
+    
+    
     // Pre-decrement
     const_iterator operator--() {
-    
+        
+        // At node_graph_.end() case
+        if (node_ite_ == begin_sentinel_) {
+            do {
+                node_ite_--;
+            } while (node_ite_ != begin_sentinel_ && node_ite_->second->out_edges_.begin() == node_ite_->second->out_edges_.end());
+            if (node_ite_ != begin_sentinel_) {
+                edge_ite_ = (node_ite_->second->out_edges_.end())--;
+            }
+            
+        // At edge_ite_.begin() case
+        } else if (edge_ite_ == node_ite_->second->out_edges_.begin()) {
+        
+            // Iterate to previous node while skipping nodes with no edges and not reaching the beginning
+            do {
+                node_ite_--;
+            } while (node_ite_ != begin_sentinel_ && node_ite_->second->out_edges_.begin() == node_ite_->second->out_edges_.end());
+            if (node_ite_ != begin_sentinel_) {
+                edge_ite_ = (node_ite_->second->out_edges_.end())--;
+            }
+        } else {
+            edge_ite_--;
+        }
+   
+        return *this;
     }
     
     // Post-decrement
@@ -148,7 +173,7 @@ class Graph {
         --(*this);
         return copy;
     }
-    */
+    
     
     // == operator
     friend bool operator==(const const_iterator& edge1, const const_iterator& edge2) {
@@ -157,7 +182,7 @@ class Graph {
         if (edge1.node_ite_ == edge2.node_ite_) {
             
             // Check special case where outer iterator is at end()
-            if (edge1.edge_ite_ == edge2.edge_ite_ || edge1.node_ite_ == edge1.sentinel_) {
+            if (edge1.edge_ite_ == edge2.edge_ite_ || edge1.node_ite_ == edge1.end_sentinel_) {
                 return true;
             }
         }
@@ -172,15 +197,22 @@ class Graph {
     
    private:
     
+    // Iterators
     typename std::map<N, std::shared_ptr<Node>>::iterator node_ite_;
-    const typename std::map<N, std::shared_ptr<Node>>::iterator sentinel_;
+    const typename std::map<N, std::shared_ptr<Node>>::iterator end_sentinel_;
+    const typename std::map<N, std::shared_ptr<Node>>::iterator begin_sentinel_;
     typename std::set<std::shared_ptr<Edge>>::iterator edge_ite_;
     
     
     // Iterator constructor
     const_iterator(const decltype(node_ite_)& node_ite,
-                   const decltype(sentinel_)& sentinel,
-                   const decltype(edge_ite_)& edge_ite): node_ite_{node_ite}, sentinel_{sentinel}, edge_ite_{edge_ite} {}
+                   const decltype(end_sentinel_)& end_sentinel,
+                   const decltype(begin_sentinel_)& begin_sentinel,
+                   const decltype(edge_ite_)& edge_ite):
+                   node_ite_{node_ite},
+                   end_sentinel_{end_sentinel},
+                   begin_sentinel_{begin_sentinel},
+                   edge_ite_{edge_ite} {}
     
                    
     friend class Graph;
@@ -204,12 +236,12 @@ class Graph {
       }
     
       // Return starting iterator
-      return {node_ite, node_graph_.end(), edge_ite};
+      return {node_ite, node_graph_.end(), node_graph_.begin(), edge_ite};
   }
 
   // Return an iterator to the end of the graph
   iterator end() {
-      return { node_graph_.end(), node_graph_.end(), {}};
+      return { node_graph_.end(), node_graph_.end(), node_graph_.begin(), {}};
   }
   
   
