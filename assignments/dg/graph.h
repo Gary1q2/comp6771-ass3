@@ -152,25 +152,22 @@ class Graph {
     
     // == operator
     friend bool operator==(const const_iterator& edge1, const const_iterator& edge2) {
-        reference tup1 = *edge1;
-        reference tup2 = *edge2;
-        if (tup1 == tup2) {
-            return true;
-        } else {
-            return false;
+        
+        // Check that both outer and inner iterators are the same
+        if (edge1.node_ite_ == edge2.node_ite_) {
+            
+            // Check special case where outer iterator is at end()
+            if (edge1.edge_ite_ == edge2.edge_ite_ || edge1.node_ite_ == edge1.sentinel_) {
+                return true;
+            }
         }
+        return false;
     }
     
     
     // != operator
     friend bool operator!=(const const_iterator& edge1, const const_iterator& edge2) {
-        reference tup1 = *edge1;
-        reference tup2 = *edge2;
-        if (tup1 == tup2) {
-            return false;
-        } else {
-            return true;
-        }
+        return !(edge1 == edge2);
     }
     
    private:

@@ -1332,7 +1332,7 @@ SCENARIO("Testing all iterator functions begin(), cbegin(), crbegin() etc.") {
             std::cout << std::get<0>(*start) << "-" << std::get<1>(*start) << "-" << std::get<2>(*start) << "\n";
             //std::cout << std::get<0>(*finish) << "-" << std::get<1>(*finish) << "-" << std::get<2>(*finish) << "\n";
             for (auto edge_ite = graph.begin(); edge_ite != graph.end(); ++edge_ite) {
-            
+                std::cout << std::get<0>(*edge_ite) << "-" << std::get<1>(*edge_ite) << "-" << std::get<2>(*edge_ite) << "\n";
             }
         }
     }
