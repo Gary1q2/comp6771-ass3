@@ -72,9 +72,13 @@ class Graph {
   
   
  public:
-  
+  /*
   class const_iterator {
    public:
+    std::map<N, std::shared_ptr<Node>>::iterator node_ite;
+    std::unordered_set
+    
+    
     using iterator_category = std::bidirectional_iterator_tag;
     using value_type = std::tuple<N, N, E>;
     using reference = std::tuple<const N&, const N&, const E&>;
@@ -183,6 +187,38 @@ class Graph {
   };
   
   using iterator = const_iterator;
+  
+  // Return an iterator to the beginning of the graph
+  iterator begin() {
+      
+      // Find the first node (if there is one)
+      auto node_ite = node_graph_.cbegin();
+      if (node_ite == node_graph_.cend()) {
+          return nullptr;
+      }
+      
+      // Find the edges in the outwards edge array (if there is one)
+      auto edge_ite = node_ite->out_edges_.cbegin();
+      if (edge_ite == node_ite->out_edges_.cend()) {
+          return nullptr;
+      }
+    
+      // Sort the outwards edges array
+      std::vector<std::shared_ptr<Edge>> temp_list = node_ite->out_edges_;
+      std::sort(temp_list.cbegin(), temp_list.cend(),
+          [](const std::shared_ptr<Edge>& edge1, const std::shared_ptr<Edge>& edge2)->bool {
+               std::shared_ptr<Node> node1 = edge1->dst_.lock();
+               std::shared_ptr<Node> node2 = edge2->dst_.lock();
+               if (node1->value_ == node2->value_) {
+                   return (edge1->weight_ < edge2->weight_);
+               } else {
+                   return (node1->value_ < node2->value_);
+               }
+      });
+    
+      // First the pick edge
+      return temp_list.at(0);
+  }*/
 
   
   
@@ -260,6 +296,10 @@ class Graph {
   // Returns a vector of the weights of edges between two nodes (sorted by increasing order of edge)
   std::vector<E> GetWeights(const N& src, const N& dst) const;
 
+  // Returns first edge in the graph (based on iterator order)
+  std::shared_ptr<Edge> GetFirstEdge() const noexcept;
+  
+  
   //============================================================
   // Friends
   //============================================================

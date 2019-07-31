@@ -11,7 +11,6 @@
   <component name="ChangeListManager">
     <list default="true" id="3805152f-d010-4e4c-b1c5-fce7a989a89c" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/client.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/graph.h" beforeDir="false" afterPath="$PROJECT_DIR$/graph.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/graph.tpp" beforeDir="false" afterPath="$PROJECT_DIR$/graph.tpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/graph_test.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/graph_test.cpp" afterDir="false" />
@@ -63,7 +62,7 @@
         <entry file="file://$PROJECT_DIR$/graph.tpp">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="757">
-              <caret line="459" column="1" selection-start-line="459" selection-start-column="1" selection-end-line="459" selection-end-column="1" />
+              <caret line="497" column="3" selection-start-line="497" selection-start-column="3" selection-end-line="497" selection-end-column="3" />
               <folding>
                 <element signature="e#411#435#0" expanded="true" />
                 <element signature="e#1117#1141#0" expanded="true" />
@@ -85,20 +84,20 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/graph.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="385">
-              <caret line="108" column="55" selection-start-line="108" selection-start-column="55" selection-end-line="108" selection-end-column="55" />
+            <state relative-caret-position="324">
+              <caret line="36" lean-forward="true" selection-start-line="36" selection-end-line="36" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/graph_test.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="1280" column="46" lean-forward="true" selection-start-line="1280" selection-start-column="46" selection-end-line="1280" selection-end-column="46" />
+            <state relative-caret-position="636">
+              <caret line="1317" column="2" selection-start-line="1317" selection-start-column="2" selection-end-line="1317" selection-end-column="2" />
             </state>
           </provider>
         </entry>
@@ -142,9 +141,9 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/client.cpp" />
-        <option value="$PROJECT_DIR$/graph_test.cpp" />
         <option value="$PROJECT_DIR$/graph.tpp" />
         <option value="$PROJECT_DIR$/graph.h" />
+        <option value="$PROJECT_DIR$/graph_test.cpp" />
       </list>
     </option>
   </component>
@@ -311,12 +310,12 @@
       <workItem from="1564240050825" duration="2820000" />
       <workItem from="1564243256800" duration="1774000" />
       <workItem from="1564457380355" duration="5180000" />
-      <workItem from="1564473199204" duration="16266000" />
+      <workItem from="1564473199204" duration="20639000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="143617000" />
+    <option name="totallyTimeSpent" value="147990000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="1920" height="1053" extended-state="6" />
@@ -370,7 +369,7 @@
     <entry file="file://$PROJECT_DIR$/graph.tpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="757">
-          <caret line="459" column="1" selection-start-line="459" selection-start-column="1" selection-end-line="459" selection-end-column="1" />
+          <caret line="497" column="3" selection-start-line="497" selection-start-column="3" selection-end-line="497" selection-end-column="3" />
           <folding>
             <element signature="e#411#435#0" expanded="true" />
             <element signature="e#1117#1141#0" expanded="true" />
@@ -391,17 +390,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/graph.h">
+    <entry file="file://$PROJECT_DIR$/graph_test.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="385">
-          <caret line="108" column="55" selection-start-line="108" selection-start-column="55" selection-end-line="108" selection-end-column="55" />
+        <state relative-caret-position="636">
+          <caret line="1317" column="2" selection-start-line="1317" selection-start-column="2" selection-end-line="1317" selection-end-column="2" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/graph_test.cpp">
+    <entry file="file://$PROJECT_DIR$/graph.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="1280" column="46" lean-forward="true" selection-start-line="1280" selection-start-column="46" selection-end-line="1280" selection-end-column="46" />
+        <state relative-caret-position="324">
+          <caret line="36" lean-forward="true" selection-start-line="36" selection-end-line="36" />
         </state>
       </provider>
     </entry>
