@@ -105,58 +105,30 @@ class Graph {
     using iterator_category = std::bidirectional_iterator_tag;
     using value_type = std::tuple<N, N, E>;
     using reference = std::tuple<const N&, const N&, const E&>;
-    /*
+    
     // De-referencing iterator
     reference operator*() const {
-        return {edge_->src_, edge_->dst_, edge_->weight_};
+        auto curr_edge = *edge_ite_;
+        auto node_src = curr_edge->src_.lock();
+        auto node_dst = curr_edge->dst_.lock();
+        return {node_src->value_, node_dst->value_, curr_edge->weight_};
     }
     
     // Pre-increment
     const_iterator operator++() {
-        
-        // Iterate through nodes to find the next largest source node
-        for (auto node_ite = node_graph_.cbegin(); node_ite != node_graph_.cend(); node_ite++) {
-            auto node = *node_ite;
-            if (edge_->src_ >= node->value_) {
-                
-                // Sort this node's edges by their destination node and edge weight
-                std::vector<std::shared_ptr<Edge>> temp_list = node->out_edges_;
-                std::sort(temp_list.cbegin(), temp_list.cend(),
-                    [](const std::shared_ptr<Edge>& edge1, const std::shared_ptr<Edge>& edge2)->bool {
-                        std::shared_ptr<Node> node1 = edge1->dst_.lock();
-                        std::shared_ptr<Node> node2 = edge2->dst_.lock();
-                        if (node1->value_ == node2->value_) {
-                            return (edge1->weight_ < edge2->weight_);
-                        } else {
-                            return (node1->value_ < node2->value_);
-                        }
-                });
-                
-                // Iterate through the sorted edge list and look for the next edge
-                for (auto edge_ite = temp_list.cbegin(); edge_ite = temp_list.cend(); edge_ite++) {
-                    auto curr_edge = *edge_ite;
-                    if (curr_edge->dst_ == edge_->dst_) {
-                        if (curr_edge->weight_ > edge_->weight_) {
-                            edge_ = curr_edge;
-                            return *this;
-                        }
-                    } else if (curr_edge->dst_ > edge_->dst_) {
-                        edge_ = curr_edge;
-                        return *this;
-                    }
-                }
-            }
+        ++edge_ite_;
+        if (edge_ite_ == node_ite_->second->out_edges_.end()) {
+          
+          // Iterate to next node while skipping nodes with no edges and not reaching the end
+          do {
+            node_ite_++;
+          } while (node_ite_ != sentinel_ && node_ite_->second->out_edges_.begin() == node_ite_->second->out_edges_.end());
+          if (node_ite_ != sentinel_) {
+            edge_ite_ = node_ite_->second->out_edges_.begin();
+          }
         }
-        
-        // This means we reached the end of the graph
-        edge_ = nullptr;
         return *this;
     }
-    
-
-    // iterate through the list and compare if the current one is bigger or not :O REUTNR IF YES... if not... move on to next node
-    // if reach end of all ndoes.. we reached end of file
-    
     
     // Post-increment
     const_iterator operator++(int) {
@@ -164,7 +136,7 @@ class Graph {
         ++(*this);
         return copy;
     }
-    
+    /*
     // Pre-decrement
     const_iterator operator--() {
     
@@ -176,72 +148,72 @@ class Graph {
         --(*this);
         return copy;
     }
+    */
     
     // == operator
     friend bool operator==(const const_iterator& edge1, const const_iterator& edge2) {
-        if ((edge1.GetSrcValue() == edge2.GetSrcValue()) &&
-            (edge1.GetDstValue() == edge2.GetDstValue()) &&
-            (edge1.weight_ == edge2.weight_)) {
+        reference tup1 = *edge1;
+        reference tup2 = *edge2;
+        if (tup1 == tup2) {
             return true;
         } else {
             return false;
         }
     }
     
+    
     // != operator
     friend bool operator!=(const const_iterator& edge1, const const_iterator& edge2) {
-        if ((edge1.GetSrcValue() == edge2.GetSrcValue()) &&
-            (edge1.GetDstValue() == edge2.GetDstValue()) &&
-            (edge1.weight_ == edge2.weight_)) {
+        reference tup1 = *edge1;
+        reference tup2 = *edge2;
+        if (tup1 == tup2) {
             return false;
         } else {
             return true;
         }
-    }*/
+    }
     
    private:
-   
-    // Iterator constructor
+    
     typename std::map<N, std::shared_ptr<Node>>::iterator node_ite_;
+    const typename std::map<N, std::shared_ptr<Node>>::iterator sentinel_;
     typename std::set<std::shared_ptr<Edge>>::iterator edge_ite_;
     
+    
+    // Iterator constructor
+    const_iterator(const decltype(node_ite_)& node_ite,
+                   const decltype(sentinel_)& sentinel,
+                   const decltype(edge_ite_)& edge_ite): node_ite_{node_ite}, sentinel_{sentinel}, edge_ite_{edge_ite} {}
+    
+                   
     friend class Graph;
   };
-  /*
+  
   using iterator = const_iterator;
   
   // Return an iterator to the beginning of the graph
   iterator begin() {
       
-      // Find the first node (if there is one)
-      auto node_ite = node_graph_.cbegin();
-      if (node_ite == node_graph_.cend()) {
-          return nullptr;
+      // Look for first node
+      auto node_ite = node_graph_.begin();
+      if (node_ite == node_graph_.end()) {
+        return end();
       }
-      
-      // Find the edges in the outwards edge array (if there is one)
-      auto edge_ite = node_ite->out_edges_.cbegin();
-      if (edge_ite == node_ite->out_edges_.cend()) {
-          return nullptr;
+  
+      // Look for first edge
+      auto edge_ite = node_ite->second->out_edges_.begin();
+      if (edge_ite == node_ite->second->out_edges_.end()) {
+        return end();
       }
     
-      // Sort the outwards edges array
-      std::vector<std::shared_ptr<Edge>> temp_list = node_ite->out_edges_;
-      std::sort(temp_list.cbegin(), temp_list.cend(),
-          [](const std::shared_ptr<Edge>& edge1, const std::shared_ptr<Edge>& edge2)->bool {
-               std::shared_ptr<Node> node1 = edge1->dst_.lock();
-               std::shared_ptr<Node> node2 = edge2->dst_.lock();
-               if (node1->value_ == node2->value_) {
-                   return (edge1->weight_ < edge2->weight_);
-               } else {
-                   return (node1->value_ < node2->value_);
-               }
-      });
-    
-      // First the pick edge
-      return temp_list.at(0);
-  }*/
+      // Return starting iterator
+      return {node_ite, node_graph_.end(), edge_ite};
+  }
 
+  // Return an iterator to the end of the graph
+  iterator end() {
+      return { node_graph_.end(), node_graph_.end(), {}};
+  }
   
   
   

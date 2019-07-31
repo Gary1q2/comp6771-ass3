@@ -1293,18 +1293,10 @@ SCENARIO("Testing GetWeights()") {
     }
   }
 }
-/*
-SCENARIO("") {
-
-}
 
 SCENARIO("Testing all iterator functions begin(), cbegin(), crbegin() etc.") {
     GIVEN("An empty graph") {
         gdwg::Graph<std::string, int> graph;
-        THEN() {
-            auto ite = graph.begin();
-            REQUIRE(*ite == nullptr);
-        }
     }
     
     GIVEN("Graph with 1 node") {
@@ -1312,10 +1304,40 @@ SCENARIO("Testing all iterator functions begin(), cbegin(), crbegin() etc.") {
     }
     
     GIVEN("Graph with 1 node and 1 edge") {
-    
+        gdwg::Graph<int, int> graph;
+        graph.InsertNode(1);
+        graph.InsertEdge(1, 1, 1);
+        /*THEN("") {
+            auto ite = graph.begin();
+            auto test = *ite;
+            std::cout << std::get<0>(test)<< "\n";
+            std::cout << std::get<1>(test)<< "\n";
+            std::cout << std::get<2>(test)<< "\n";
+            for (auto edge_ite = graph.begin(); edge_ite != graph.end(); edge_ite++) {
+              //auto curr_edge = *edge_ite;
+            }
+        }*/
+    }
+    GIVEN("Graph with 2 nodes and 3 edges") {
+        gdwg::Graph<std::string, int> graph;
+        graph.InsertNode("hi");
+        graph.InsertNode("bye");
+        graph.InsertNode("lol");
+        graph.InsertEdge("hi", "bye", 3);
+        graph.InsertEdge("hi", "lol", 2);
+        graph.InsertEdge("bye", "lol", 2);
+        THEN("Testing...") {
+            auto start = graph.begin();
+            //auto finish = graph.end();
+            std::cout << std::get<0>(*start) << "-" << std::get<1>(*start) << "-" << std::get<2>(*start) << "\n";
+            //std::cout << std::get<0>(*finish) << "-" << std::get<1>(*finish) << "-" << std::get<2>(*finish) << "\n";
+            for (auto edge_ite = graph.begin(); edge_ite != graph.end(); ++edge_ite) {
+            
+            }
+        }
     }
 }
-*/
+
 
 //============================================================
 // Friends
@@ -1627,8 +1649,3 @@ SCENARIO("Testing friend operator== and operator!=") {
 //============================================================
 // Helpful tests
 //============================================================
-SCENARIO("Testing sort/map compare functor") {
-    GIVEN("A ") {
-    
-    }
-}
