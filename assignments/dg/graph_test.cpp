@@ -1622,3 +1622,13 @@ SCENARIO("Testing friend operator== and operator!=") {
     }
   }
 }
+
+
+//============================================================
+// Helpful tests
+//============================================================
+SCENARIO("Testing sort/map compare functor") {
+    GIVEN("A ") {
+    
+    }
+}

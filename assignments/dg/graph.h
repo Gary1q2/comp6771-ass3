@@ -15,8 +15,33 @@ template <typename N, typename E>
 class Graph {
  private:
   
-  struct Edge;  // Defining Edge struct here so it can be included in the Node class
-
+  struct Edge;
+  
+  // Functor to compare two edges
+  struct edge_compare {
+    bool operator() (const std::shared_ptr<Edge> edge1, const std::shared_ptr<Edge> edge2) const {
+      
+      // Compare the source nodes
+      std::shared_ptr<Node> edge1_src = edge1->src_.lock();
+      std::shared_ptr<Node> edge2_src = edge2->src_.lock();
+      if (edge1_src->value_ != edge2_src->value_) {
+        return (edge1_src->value_ < edge2_src->value_);
+        
+      // Compare the destination nodes
+      } else {
+        std::shared_ptr<Node> edge1_dst = edge1->dst_.lock();
+        std::shared_ptr<Node> edge2_dst = edge2->dst_.lock();
+        if (edge1_dst->value_ != edge2_dst->value_) {
+          return (edge1_dst->value_ < edge2_dst->value_);
+          
+        // Compares the edge weights
+        } else {
+          return (edge1->weight_ < edge2->weight_);
+        }
+      }
+    }
+  };
+  
   // Node class
   struct Node {
 
@@ -36,9 +61,9 @@ class Graph {
     void change_value(const N& v) noexcept { value_ = v; }
 
     // Variables
-    N value_;                                    // Value of the node
-    std::set<std::shared_ptr<Edge>> in_edges_;   // Edges that go into this node
-    std::set<std::shared_ptr<Edge>> out_edges_;  // Edges that go AWAY from this node
+    N value_;                                                  // Value of the node
+    std::set<std::shared_ptr<Edge>, edge_compare> in_edges_;   // Edges that go into this node
+    std::set<std::shared_ptr<Edge>, edge_compare> out_edges_;  // Edges that go AWAY from this node
   };
 
   // Edge class
@@ -72,17 +97,15 @@ class Graph {
   
   
  public:
-  /*
+  
   class const_iterator {
+   
    public:
-    std::map<N, std::shared_ptr<Node>>::iterator node_ite;
-    std::set
-    
     
     using iterator_category = std::bidirectional_iterator_tag;
     using value_type = std::tuple<N, N, E>;
     using reference = std::tuple<const N&, const N&, const E&>;
-    
+    /*
     // De-referencing iterator
     reference operator*() const {
         return {edge_->src_, edge_->dst_, edge_->weight_};
@@ -142,7 +165,6 @@ class Graph {
         return copy;
     }
     
-    
     // Pre-decrement
     const_iterator operator--() {
     
@@ -175,17 +197,17 @@ class Graph {
         } else {
             return true;
         }
-    }
+    }*/
     
    private:
    
     // Iterator constructor
-    explicit const_iterator(Edge* edge): edge_{edge} {};
-    Edge* edge_;
+    typename std::map<N, std::shared_ptr<Node>>::iterator node_ite_;
+    typename std::set<std::shared_ptr<Edge>>::iterator edge_ite_;
     
     friend class Graph;
   };
-  
+  /*
   using iterator = const_iterator;
   
   // Return an iterator to the beginning of the graph
@@ -307,37 +329,13 @@ class Graph {
   // Operator overwrite to print out the stream
   friend std::ostream& operator<<(std::ostream& out_stream,
                                   const gdwg::Graph<N, E>& curr_graph) noexcept {
-
-    auto unordered = curr_graph.node_graph_;
-    std::map<N, std::shared_ptr<Node>> all_nodes(unordered.begin(), unordered.end());
-
-    for (auto element : all_nodes) {
+      
+    // Iterate over nodes
+    for (auto element : curr_graph.node_graph_) {
       out_stream << element.first << " (\n";
-      std::vector<std::shared_ptr<Edge>> all_edge(element.second->out_edges_.begin(),
-                                                  element.second->out_edges_.end());
-      /**
-       * sort lamda function
-       */
 
-      std::sort(all_edge.begin(), all_edge.end(),
-                [](const std::shared_ptr<Edge>& m1, const std::shared_ptr<Edge>& m2) -> bool {
-                  bool flag;
-                  try {
-                    std::shared_ptr<Node> e1 = m1->dst_.lock();
-                    std::shared_ptr<Node> e2 = m2->dst_.lock();
-                    auto v1 = e1->value_;
-                    auto v2 = e2->value_;
-                    if (v1 == v2) {
-                      flag = ((m1->weight_) < (m2->weight_));
-                    } else {
-                      flag = (v1 < v2);
-                    }
-                  } catch (std::bad_weak_ptr& b) {
-                    std::cout << "BAD weak_ptr \n ";
-                  }
-                  return flag;
-                });
-      for (auto edge : all_edge) {
+      // Iterate over outwards edges
+      for (auto edge : element.second->out_edges_) {
         try {
           auto dst_node = edge->dst_.lock();
           out_stream << "  " << dst_node->value_ << " | ";
