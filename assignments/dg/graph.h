@@ -242,10 +242,14 @@ class Graph {
   //const_reverse_iterator crend() const;
   
   // Begin()
-  //const_iterator begin() const;
+  const_iterator begin() const {
+      return cbegin();
+  }
   
   // End()
-  //const_iterator end() const;
+  const_iterator end() const {
+      return cend();
+  }
   
   // Reverse begin()
   //const_reverse_iterator rbegin() const;
