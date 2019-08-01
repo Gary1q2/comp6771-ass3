@@ -94,11 +94,7 @@ class Graph {
   // Map containing all the nodes in the graph
   std::map<N, std::shared_ptr<Node>> node_graph_;
   
-  
-  
- public:
-  
-  class const_iterator {
+  class Iterator {
    
    public:
     
@@ -115,7 +111,7 @@ class Graph {
     }
     
     // Pre-increment
-    const_iterator operator++() {
+    Iterator operator++() {
         ++edge_ite_;
         if (edge_ite_ == node_ite_->second->out_edges_.end()) {
           
@@ -131,53 +127,38 @@ class Graph {
     }
     
     // Post-increment
-    const_iterator operator++(int) {
+    Iterator operator++(int) {
         auto copy{*this};
         ++(*this);
         return copy;
     }
     
-    
     // Pre-decrement
-    const_iterator operator--() {
+    Iterator operator--() {
         
-        // At node_graph_.end() case
-        if (node_ite_ == end_sentinel_) {
+        // At node_graph_.end() case + edge_ite_.begin() case
+        if (node_ite_ == end_sentinel_ || edge_ite_ == node_ite_->second->out_edges_.begin()) {
             do {
                 node_ite_--;
             } while (node_ite_ != begin_sentinel_ && node_ite_->second->out_edges_.begin() == node_ite_->second->out_edges_.end());
-            if (node_ite_ != begin_sentinel_) {
-                edge_ite_ = --(node_ite_->second->out_edges_.end());
-            }
-
-        // At edge_ite_.begin() case
-        } else if (edge_ite_ == node_ite_->second->out_edges_.begin()) {
-        
-            // Iterate to previous node while skipping nodes with no edges and not reaching the beginning
-            do {
-                node_ite_--;
-            } while (node_ite_ != begin_sentinel_ && node_ite_->second->out_edges_.begin() == node_ite_->second->out_edges_.end());
-            if (node_ite_ != begin_sentinel_) {
-                edge_ite_ = (node_ite_->second->out_edges_.end())--;
-            }
+            edge_ite_ = --(node_ite_->second->out_edges_.end());
+            
+        // Otherwise move edge back by one
         } else {
             edge_ite_--;
         }
-   
         return *this;
     }
     
     // Post-decrement
-    const_iterator operator--(int) {
+    Iterator operator--(int) {
         auto copy{*this};
         --(*this);
         return copy;
     }
     
-    
     // == operator
-    friend bool operator==(const const_iterator& edge1, const const_iterator& edge2) {
-        
+    friend bool operator==(const Iterator& edge1, const Iterator& edge2) {
         // Check that both outer and inner iterators are the same
         if (edge1.node_ite_ == edge2.node_ite_) {
             
@@ -189,60 +170,90 @@ class Graph {
         return false;
     }
     
-    
     // != operator
-    friend bool operator!=(const const_iterator& edge1, const const_iterator& edge2) {
+    friend bool operator!=(const Iterator& edge1, const Iterator& edge2) {
         return !(edge1 == edge2);
     }
     
    private:
     
     // Iterators
-    typename std::map<N, std::shared_ptr<Node>>::iterator node_ite_;
-    const typename std::map<N, std::shared_ptr<Node>>::iterator end_sentinel_;
-    const typename std::map<N, std::shared_ptr<Node>>::iterator begin_sentinel_;
-    typename std::set<std::shared_ptr<Edge>>::iterator edge_ite_;
+    typename std::map<N, std::shared_ptr<Node>>::const_iterator node_ite_;
+    const typename std::map<N, std::shared_ptr<Node>>::const_iterator end_sentinel_;
+    const typename std::map<N, std::shared_ptr<Node>>::const_iterator begin_sentinel_;
+    typename std::set<std::shared_ptr<Edge>, edge_compare>::const_iterator edge_ite_;
     
+    
+    friend class Graph;
     
     // Iterator constructor
-    const_iterator(const decltype(node_ite_)& node_ite,
-                   const decltype(end_sentinel_)& end_sentinel,
-                   const decltype(begin_sentinel_)& begin_sentinel,
-                   const decltype(edge_ite_)& edge_ite):
+    Iterator(const decltype(node_ite_) node_ite,
+                   const decltype(end_sentinel_) end_sentinel,
+                   const decltype(begin_sentinel_) begin_sentinel,
+                   const decltype(edge_ite_) edge_ite):
                    node_ite_{node_ite},
                    end_sentinel_{end_sentinel},
                    begin_sentinel_{begin_sentinel},
                    edge_ite_{edge_ite} {}
+             
     
-                   
-    friend class Graph;
   };
   
-  using iterator = const_iterator;
   
-  // Return an iterator to the beginning of the graph
-  iterator begin() {
+ public:
+  
+  using const_iterator = Iterator;
+  using const_reverse_iterator = Iterator;
+  
+  
+  
+  // Const begin()
+  const_iterator cbegin() const {
       
-      // Look for first node
+      // Case where graph has no nodes
       auto node_ite = node_graph_.begin();
       if (node_ite == node_graph_.end()) {
-        return end();
+        return cend();
       }
   
-      // Look for first edge
-      auto edge_ite = node_ite->second->out_edges_.begin();
-      if (edge_ite == node_ite->second->out_edges_.end()) {
-        return end();
+      // Iterate until a node with edges is found...
+      while (node_ite != node_graph_.end() && node_ite->second->out_edges_.begin() == node_ite->second->out_edges_.end()) {
+        node_ite++;
       }
-    
+      
+      // Case where graph has nodes but no edges
+      if (node_ite == node_graph_.end()) {
+        return cend();
+      }
+      
       // Return starting iterator
-      return {node_ite, node_graph_.end(), node_graph_.begin(), edge_ite};
+      return const_iterator{node_ite, node_graph_.end(), node_graph_.begin(), node_ite->second->out_edges_.begin()};
   }
-
-  // Return an iterator to the end of the graph
-  iterator end() {
-      return { node_graph_.end(), node_graph_.end(), node_graph_.begin(), {}};
+  
+  // Const end()
+  const_iterator cend() const {
+      return const_iterator(node_graph_.end(), node_graph_.end(), node_graph_.end(), {});
   }
+  
+  // Const reverse begin()
+  //const_reverse_iterator crbegin() const;
+  
+  // Const reverse end()
+  //const_reverse_iterator crend() const;
+  
+  // Begin()
+  //const_iterator begin() const;
+  
+  // End()
+  //const_iterator end() const;
+  
+  // Reverse begin()
+  //const_reverse_iterator rbegin() const;
+  
+  // Reverse end()
+  //const_reverse_iterator rend() const;
+  
+  
   
   
   

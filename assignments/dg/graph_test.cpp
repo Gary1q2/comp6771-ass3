@@ -1294,6 +1294,149 @@ SCENARIO("Testing GetWeights()") {
   }
 }
 
+SCENARIO("Testing iterator cbegin(), cend() & ==, !=") {
+    GIVEN("An empty graph") {
+        gdwg::Graph<int, int> graph;
+        THEN("cbegin() is equal to cend()") {
+            auto ite1 = graph.cbegin();
+            auto ite2 = graph.cend();
+            REQUIRE(ite1 == ite2);
+            REQUIRE((ite1 != ite2) == false);
+        }
+    }
+ 
+    GIVEN("Graph with 1 node") {
+        gdwg::Graph<int, int> graph;
+        graph.InsertNode(1);
+        THEN("cbegin() is equal to cend()") {
+            auto ite1 = graph.cbegin();
+            auto ite2 = graph.cend();
+            REQUIRE(ite1 == ite2);
+            REQUIRE((ite1 != ite2) == false);
+        }
+    }
+    GIVEN("A graph with 2 node and 3 edge") {
+        gdwg::Graph<int, int> graph;
+        graph.InsertNode(1);
+        graph.InsertNode(2);
+        graph.InsertEdge(1, 1, 1);
+        graph.InsertEdge(1, 2, 1);
+        graph.InsertEdge(2, 1, 1);
+        THEN("Testing == and !=") {
+            auto ite1 = graph.cbegin();
+            auto ite2 = graph.cend();
+            REQUIRE(ite1 != ite2);
+            REQUIRE((ite1 == ite2) == false);
+            ite1++;
+            REQUIRE(ite1 != ite2);
+            REQUIRE((ite1 == ite2) == false);
+            ite1++;
+            REQUIRE(ite1 != ite2);
+            REQUIRE((ite1 == ite2) == false);
+            ite1++;
+            REQUIRE(ite1 == ite2);
+            REQUIRE((ite1 != ite2) == false);
+            ite2--;
+            REQUIRE(ite1 != ite2);
+            REQUIRE((ite1 == ite2) == false);
+            ite2--;
+            REQUIRE(ite1 != ite2);
+            REQUIRE((ite1 == ite2) == false);
+            ite1--;
+            REQUIRE(ite1 != ite2);
+            REQUIRE((ite1 == ite2) == false);
+            ite1--;
+            REQUIRE(ite1 == ite2);
+            REQUIRE((ite1 != ite2) == false);
+            
+            auto ite3 = ++graph.cbegin();
+            auto ite4 = --graph.cend();
+            REQUIRE(ite3 != ite4);
+            REQUIRE((ite3 == ite4) == false);
+            ite4--;
+            REQUIRE(ite3 == ite4);
+            REQUIRE((ite3 != ite4) == false);
+        }
+    }
+}
+
+SCENARIO("Testing iterator deferencing & ++/-- ") {
+    GIVEN("A graph with 1 node and 1 edge") {
+        gdwg::Graph<int, int> graph;
+        graph.InsertNode(1);
+        graph.InsertEdge(1, 1, 1);
+        THEN("Testing deferencing & ++/--") {
+            auto ite1 = graph.cbegin();
+            REQUIRE((*ite1) == std::make_tuple(1, 1, 1));
+            
+            auto ite2 = graph.cend();
+            REQUIRE(ite1 != ite2);
+            REQUIRE((ite1 == ite2) == false);
+            
+            ++ite1;
+            REQUIRE(ite1 == ite2);
+            --ite1;
+            REQUIRE(ite1 != ite2);
+            REQUIRE((ite1 == ite2) == false);
+            REQUIRE((*ite1) == std::make_tuple(1, 1, 1));
+            ite1++;
+            REQUIRE(ite1 == ite2);
+            ite1--;
+            REQUIRE(ite1 != ite2);
+            REQUIRE((ite1 == ite2) == false);
+            REQUIRE((*ite1) == std::make_tuple(1, 1, 1));
+        }
+    }
+    GIVEN("A graph with 2 node and 3 edges") {
+        gdwg::Graph<int, int> graph;
+        graph.InsertNode(1);
+        graph.InsertNode(2);
+        graph.InsertEdge(1, 1, 1);
+        graph.InsertEdge(1, 1, 3);
+        graph.InsertEdge(1, 2, 4);
+        THEN("Testing deferencing and ++/--") {
+            auto ite = graph.cbegin();
+            REQUIRE((*ite) == std::make_tuple(1, 1, 1));
+            ++ite;
+            REQUIRE((*ite) == std::make_tuple(1, 1, 3));
+            --ite;
+            REQUIRE((*ite) == std::make_tuple(1, 1, 1));
+            ite++;
+            REQUIRE((*ite) == std::make_tuple(1, 1, 3));
+            ite++;
+            REQUIRE((*ite) == std::make_tuple(1, 2, 4));
+            ite--;
+            REQUIRE((*ite) == std::make_tuple(1, 1, 3));
+            ite++;
+            REQUIRE((*ite) == std::make_tuple(1, 2, 4));
+            ++ite;
+            
+            auto end = graph.cend();
+            REQUIRE(ite == end);
+            
+            ite--;
+            REQUIRE((*ite) == std::make_tuple(1, 2, 4));
+            --ite;
+            REQUIRE((*ite) == std::make_tuple(1, 1, 3));
+            --ite;
+            REQUIRE((*ite) == std::make_tuple(1, 1, 1));
+            
+            auto begin = graph.cbegin();
+            REQUIRE(ite == begin);
+            
+            for (auto omg = graph.cbegin(); omg != graph.cend(); omg++) {
+                std::cout << std::get<0>(*omg) << "-" << std::get<1>(*omg) << "-" << std::get<2>(*omg) << "\n";
+            }
+            auto fk = graph.cbegin();
+            std::cout << std::get<0>(*fk) << "-" << std::get<1>(*fk) << "-" << std::get<2>(*fk) << "\n";
+            fk++;
+            std::cout << std::get<0>(*fk) << "-" << std::get<1>(*fk) << "-" << std::get<2>(*fk) << "\n";
+            fk++;
+            std::cout << std::get<0>(*fk) << "-" << std::get<1>(*fk) << "-" << std::get<2>(*fk) << "\n";
+        }
+    }
+}
+/*
 SCENARIO("Testing all iterator functions begin(), cbegin(), crbegin() etc.") {
     GIVEN("An empty graph") {
         gdwg::Graph<std::string, int> graph;
@@ -1307,7 +1450,7 @@ SCENARIO("Testing all iterator functions begin(), cbegin(), crbegin() etc.") {
         gdwg::Graph<int, int> graph;
         graph.InsertNode(1);
         graph.InsertEdge(1, 1, 1);
-        /*THEN("") {
+        THEN("") {
             auto ite = graph.begin();
             auto test = *ite;
             std::cout << std::get<0>(test)<< "\n";
@@ -1316,31 +1459,52 @@ SCENARIO("Testing all iterator functions begin(), cbegin(), crbegin() etc.") {
             for (auto edge_ite = graph.begin(); edge_ite != graph.end(); edge_ite++) {
               //auto curr_edge = *edge_ite;
             }
-        }*/
+        }
     }
     GIVEN("Graph with 2 nodes and 3 edges") {
         gdwg::Graph<std::string, int> graph;
         graph.InsertNode("hi");
         graph.InsertNode("bye");
         graph.InsertNode("lol");
+        graph.InsertEdge("bye", "lol", 2);
         graph.InsertEdge("hi", "bye", 3);
         graph.InsertEdge("hi", "lol", 2);
-        graph.InsertEdge("bye", "lol", 2);
-        THEN("Testing...") {
-            //auto start = graph.begin();
-            //auto finish = --graph.end();
-            //std::cout << std::get<0>(*start) << "-" << std::get<1>(*start) << "-" << std::get<2>(*start) << "\n";
-            //std::cout << std::get<0>(*finish) << "-" << std::get<1>(*finish) << "-" << std::get<2>(*finish) << "\n";
-            //for (auto edge_ite = graph.begin(); edge_ite != graph.end(); ++edge_ite) {
+    
+        THEN("Testing pre/post ++/--") {
+            auto ite = graph.cbegin();
+            REQUIRE(std::get<0>(*ite) == "bye");
+            REQUIRE(std::get<1>(*ite) == "lol");
+            REQUIRE(std::get<2>(*ite) == 2);
+            ++ite;
+            REQUIRE(std::get<0>(*ite) == "hi");
+            REQUIRE(std::get<1>(*ite) == "bye");
+            REQUIRE(std::get<2>(*ite) == 3);
+            --ite;
+            REQUIRE(std::get<0>(*ite) == "bye");
+            REQUIRE(std::get<1>(*ite) == "lol");
+            REQUIRE(std::get<2>(*ite) == 2);
+            ite++;
+            REQUIRE(std::get<0>(*ite) == "hi");
+            REQUIRE(std::get<1>(*ite) == "bye");
+            REQUIRE(std::get<2>(*ite) == 3);
+            ite--;
+            REQUIRE(std::get<0>(*ite) == "bye");
+            REQUIRE(std::get<1>(*ite) == "lol");
+            REQUIRE(std::get<2>(*ite) == 2);
+            ite++;
+            ite++;
+            REQUIRE(std::get<0>(*ite) == "hi");
+            REQUIRE(std::get<1>(*ite) == "lol");
+            REQUIRE(std::get<2>(*ite) == 2);
+            
+            
+            //for (auto edge_ite = graph.cbegin(); edge_ite != graph.cend(); edge_ite++) {
             //    std::cout << std::get<0>(*edge_ite) << "-" << std::get<1>(*edge_ite) << "-" << std::get<2>(*edge_ite) << "\n";
             //}
-            for (auto edge_ite = --graph.end(); edge_ite != graph.begin(); --edge_ite) {
-                std::cout << std::get<0>(*edge_ite) << "-" << std::get<1>(*edge_ite) << "-" << std::get<2>(*edge_ite) << "\n";
-            }
             
         }
     }
-}
+}*/
 
 
 //============================================================

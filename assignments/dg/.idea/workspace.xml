@@ -56,11 +56,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/graph.tpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="61">
-              <caret line="422" column="26" lean-forward="true" selection-start-line="422" selection-start-column="26" selection-end-line="422" selection-end-column="26" />
+            <state relative-caret-position="151">
+              <caret line="199" column="46" lean-forward="true" selection-start-line="199" selection-start-column="46" selection-end-line="199" selection-end-column="46" />
               <folding>
                 <element signature="e#411#435#0" expanded="true" />
                 <element signature="e#1117#1141#0" expanded="true" />
@@ -82,11 +82,20 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/graph.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="278">
-              <caret line="154" column="8" lean-forward="true" selection-start-line="154" selection-start-column="8" selection-end-line="154" selection-end-column="8" />
+            <state relative-caret-position="151">
+              <caret line="221" column="6" lean-forward="true" selection-start-line="221" selection-start-column="6" selection-end-line="221" selection-end-column="6" />
+              <folding>
+                <element signature="e#3070#3381#0" />
+                <element signature="e#3352#3786#0" />
+                <element signature="e#3849#3975#0" />
+                <element signature="e#4050#5110#0" />
+                <element signature="e#5348#5474#0" />
+                <element signature="e#5567#6024#0" />
+                <element signature="e#5820#5942#1" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -94,8 +103,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/graph_test.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="469">
-              <caret line="1336" column="88" lean-forward="true" selection-start-line="1336" selection-start-column="88" selection-end-line="1336" selection-end-column="88" />
+            <state relative-caret-position="451">
+              <caret line="1329" column="30" selection-start-line="1329" selection-start-column="30" selection-end-line="1329" selection-end-column="30" />
             </state>
           </provider>
         </entry>
@@ -144,8 +153,8 @@
       <list>
         <option value="$PROJECT_DIR$/client.cpp" />
         <option value="$PROJECT_DIR$/graph.tpp" />
-        <option value="$PROJECT_DIR$/graph.h" />
         <option value="$PROJECT_DIR$/graph_test.cpp" />
+        <option value="$PROJECT_DIR$/graph.h" />
       </list>
     </option>
   </component>
@@ -312,12 +321,12 @@
       <workItem from="1564240050825" duration="2820000" />
       <workItem from="1564243256800" duration="1774000" />
       <workItem from="1564457380355" duration="5180000" />
-      <workItem from="1564473199204" duration="48202000" />
+      <workItem from="1564473199204" duration="55893000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="175553000" />
+    <option name="totallyTimeSpent" value="183244000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="1920" height="1053" extended-state="6" />
@@ -388,10 +397,33 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/graph.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="151">
+          <caret line="221" column="6" lean-forward="true" selection-start-line="221" selection-start-column="6" selection-end-line="221" selection-end-column="6" />
+          <folding>
+            <element signature="e#3070#3381#0" />
+            <element signature="e#3352#3786#0" />
+            <element signature="e#3849#3975#0" />
+            <element signature="e#4050#5110#0" />
+            <element signature="e#5348#5474#0" />
+            <element signature="e#5567#6024#0" />
+            <element signature="e#5820#5942#1" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graph_test.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="451">
+          <caret line="1329" column="30" selection-start-line="1329" selection-start-column="30" selection-end-line="1329" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/graph.tpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="61">
-          <caret line="422" column="26" lean-forward="true" selection-start-line="422" selection-start-column="26" selection-end-line="422" selection-end-column="26" />
+        <state relative-caret-position="151">
+          <caret line="199" column="46" lean-forward="true" selection-start-line="199" selection-start-column="46" selection-end-line="199" selection-end-column="46" />
           <folding>
             <element signature="e#411#435#0" expanded="true" />
             <element signature="e#1117#1141#0" expanded="true" />
@@ -409,20 +441,6 @@
             <element signature="e#12741#12765#0" expanded="true" />
             <element signature="e#13910#13934#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graph_test.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="469">
-          <caret line="1336" column="88" lean-forward="true" selection-start-line="1336" selection-start-column="88" selection-end-line="1336" selection-end-column="88" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graph.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="278">
-          <caret line="154" column="8" lean-forward="true" selection-start-line="154" selection-start-column="8" selection-end-line="154" selection-end-column="8" />
         </state>
       </provider>
     </entry>
