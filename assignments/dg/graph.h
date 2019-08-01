@@ -142,14 +142,14 @@ class Graph {
     const_iterator operator--() {
         
         // At node_graph_.end() case
-        if (node_ite_ == begin_sentinel_) {
+        if (node_ite_ == end_sentinel_) {
             do {
                 node_ite_--;
             } while (node_ite_ != begin_sentinel_ && node_ite_->second->out_edges_.begin() == node_ite_->second->out_edges_.end());
             if (node_ite_ != begin_sentinel_) {
-                edge_ite_ = (node_ite_->second->out_edges_.end())--;
+                edge_ite_ = --(node_ite_->second->out_edges_.end());
             }
-            
+
         // At edge_ite_.begin() case
         } else if (edge_ite_ == node_ite_->second->out_edges_.begin()) {
         

@@ -1328,13 +1328,13 @@ SCENARIO("Testing all iterator functions begin(), cbegin(), crbegin() etc.") {
         graph.InsertEdge("bye", "lol", 2);
         THEN("Testing...") {
             //auto start = graph.begin();
-            //auto finish = graph.end();
+            //auto finish = --graph.end();
             //std::cout << std::get<0>(*start) << "-" << std::get<1>(*start) << "-" << std::get<2>(*start) << "\n";
             //std::cout << std::get<0>(*finish) << "-" << std::get<1>(*finish) << "-" << std::get<2>(*finish) << "\n";
             //for (auto edge_ite = graph.begin(); edge_ite != graph.end(); ++edge_ite) {
             //    std::cout << std::get<0>(*edge_ite) << "-" << std::get<1>(*edge_ite) << "-" << std::get<2>(*edge_ite) << "\n";
             //}
-            for (auto edge_ite = graph.end(); edge_ite != graph.begin(); --edge_ite) {
+            for (auto edge_ite = --graph.end(); edge_ite != graph.begin(); --edge_ite) {
                 std::cout << std::get<0>(*edge_ite) << "-" << std::get<1>(*edge_ite) << "-" << std::get<2>(*edge_ite) << "\n";
             }
             
