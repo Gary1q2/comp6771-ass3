@@ -3,7 +3,6 @@
 template <typename N, typename E>
 gdwg::Graph<N, E>::Graph(typename std::vector<N>::const_iterator start,
                          typename std::vector<N>::const_iterator end) {
-
   // Iterate through vector and create new nodes
   for (auto ite = start; ite != end; ite++) {
     InsertNode(*ite);
@@ -15,7 +14,6 @@ gdwg::Graph<N, E>::Graph(typename std::vector<N>::const_iterator start,
 template <typename N, typename E>
 gdwg::Graph<N, E>::Graph(typename std::vector<std::tuple<N, N, E>>::const_iterator start,
                          typename std::vector<std::tuple<N, N, E>>::const_iterator end) {
-
   // Iterate through vector and create new nodes if they don't exist, and then add the edges
   for (auto ite = start; ite != end; ite++) {
     if (IsNode(std::get<0>(*ite)) == false) {
@@ -33,7 +31,6 @@ gdwg::Graph<N, E>::Graph(typename std::vector<std::tuple<N, N, E>>::const_iterat
  */
 template <typename N, typename E>
 gdwg::Graph<N, E>::Graph(std::initializer_list<N> list) {
-
   // Iterate through list and add the nodes
   for (auto ite = list.begin(); ite != list.end(); ite++) {
     InsertNode(*ite);
@@ -44,7 +41,6 @@ gdwg::Graph<N, E>::Graph(std::initializer_list<N> list) {
  */
 template <typename N, typename E>
 gdwg::Graph<N, E>::Graph(const Graph<N, E>& graph) {
-
   // Add all the nodes from the graph into the newly constructed graph
   for (auto ite = graph.node_graph_.cbegin(); ite != graph.node_graph_.cend(); ite++) {
     InsertNode(ite->first);
@@ -71,7 +67,6 @@ gdwg::Graph<N, E>::Graph(const Graph<N, E>& graph) {
  */
 template <typename N, typename E>
 gdwg::Graph<N, E>::Graph(Graph<N, E>&& graph) {
-
   // Move the map pointer from graph to the constructed graph
   node_graph_ = std::move(graph.node_graph_);
 }
@@ -84,7 +79,6 @@ gdwg::Graph<N, E>::Graph(Graph<N, E>&& graph) {
  */
 template <typename N, typename E>
 gdwg::Graph<N, E>& gdwg::Graph<N, E>::operator=(const gdwg::Graph<N, E>& graph) noexcept {
-
   if (this == &graph) {
     return *this;
   } else {
@@ -120,7 +114,6 @@ gdwg::Graph<N, E>& gdwg::Graph<N, E>::operator=(const gdwg::Graph<N, E>& graph) 
  */
 template <typename N, typename E>
 gdwg::Graph<N, E>& gdwg::Graph<N, E>::operator=(gdwg::Graph<N, E>&& graph) noexcept {
-
   if (this == &graph) {
     return *this;
   } else {
@@ -155,7 +148,6 @@ bool gdwg::Graph<N, E>::InsertNode(const N& val) noexcept {
  */
 template <typename N, typename E>
 bool gdwg::Graph<N, E>::InsertEdge(const N& src, const N& dst, const E& w) {
-
   // Throw exception if source or destination node don't exist
   if (!IsNode(src) || !IsNode(dst)) {
     throw std::runtime_error(
@@ -200,16 +192,13 @@ bool gdwg::Graph<N, E>::DeleteNode(const N& my_node) noexcept {
         if (!IsNode(src_Node->value_) || !IsNode(dst_Node->value_)) {
           continue;
         } else {
-
           if (dst_Node == curr_Node) {
-
             if (src_Node->out_edges_.count(curr_edge) != 0)
               src_Node->out_edges_.erase(curr_edge);
             // if (dst_Node->in_edges_.count(curr_edge) != 0)
             // dst_Node->in_edges_.erase(curr_edge);
           }
         }
-
       } catch (std::bad_weak_ptr& b) {
         std::cout << "BAD weak_ptr \n ";
       }
@@ -217,7 +206,6 @@ bool gdwg::Graph<N, E>::DeleteNode(const N& my_node) noexcept {
     // iterate through out edge and delete the edge
 
     for (auto curr_edge : curr_Node->out_edges_) {
-
       try {
         std::shared_ptr<Node> src_Node = curr_edge->src_.lock();
         std::shared_ptr<Node> dst_Node = curr_edge->dst_.lock();
@@ -236,11 +224,9 @@ bool gdwg::Graph<N, E>::DeleteNode(const N& my_node) noexcept {
         std::cout << "BAD weak_ptr \n ";
       }
     }
-
   } catch (const std::out_of_range& e) {
     std::cout << "Exception at " << e.what() << std::endl;
   }
-
   this->node_graph_.erase(my_node);
   return true;
 }
@@ -327,7 +313,6 @@ void gdwg::Graph<N, E>::Clear() noexcept {
  */
 template <typename N, typename E>
 bool gdwg::Graph<N, E>::IsNode(const N& val) const noexcept {
-
   // Search if a node with val already exists
   auto ite = node_graph_.find(val);
   if (ite == node_graph_.end()) {
@@ -340,13 +325,11 @@ bool gdwg::Graph<N, E>::IsNode(const N& val) const noexcept {
  */
 template <typename N, typename E>
 bool gdwg::Graph<N, E>::IsConnected(const N& src, const N& dst) const {
-
   // Throw exception if source or destination node don't exist
   if (!IsNode(src) || !IsNode(dst)) {
     throw std::runtime_error(
         "Cannot call Graph::IsConnected if src or dst node don't exist in the graph");
   }
-
   // Iterate through the src node's in_edge_ array to look for an edge to dst node
   auto in_edge_array = node_graph_.at(src)->in_edges_;
   for (auto ite = in_edge_array.cbegin(); ite != in_edge_array.cend(); ite++) {
@@ -357,7 +340,6 @@ bool gdwg::Graph<N, E>::IsConnected(const N& src, const N& dst) const {
       return true;
     }
   }
-
   // Iterate through the src node's out_edge_ array to look for an edge to dst node
   auto out_edge_array = node_graph_.at(src)->out_edges_;
   for (auto ite = out_edge_array.cbegin(); ite != out_edge_array.cend(); ite++) {
@@ -376,7 +358,6 @@ bool gdwg::Graph<N, E>::IsConnected(const N& src, const N& dst) const {
  */
 template <typename N, typename E>
 std::vector<N> gdwg::Graph<N, E>::GetNodes() const noexcept {
-
   // Iterate through map containing all the node values and append to a vector
   std::vector<N> result;
   for (auto ite = node_graph_.cbegin(); ite != node_graph_.cend(); ite++) {
@@ -392,12 +373,11 @@ std::vector<N> gdwg::Graph<N, E>::GetNodes() const noexcept {
  */
 template <typename N, typename E>
 std::vector<N> gdwg::Graph<N, E>::GetConnected(const N& src) const {
-
   // Throw exception if source node doesn't exist
   if (!IsNode(src)) {
     throw std::out_of_range("Cannot call Graph::GetConnected if src doesn't exist in the graph");
   }
-  
+
   std::set<N> result_set;
 
   // Iterate through each outward edge on source node and append the destination node
@@ -418,13 +398,12 @@ std::vector<N> gdwg::Graph<N, E>::GetConnected(const N& src) const {
  */
 template <typename N, typename E>
 std::vector<E> gdwg::Graph<N, E>::GetWeights(const N& src, const N& dst) const {
-
   // Throw exception if source or destination node don't exist
   if (!IsNode(src) || !IsNode(dst)) {
     throw std::out_of_range(
         "Cannot call Graph::GetWeights if src or dst node don't exist in the graph");
   }
-  
+
   std::vector<E> result_vec;
 
   // Iterate through source node's out_edge_ array and look for edges that connect to dst node

@@ -7,46 +7,45 @@
 #include <map>
 #include <memory>
 #include <set>
+#include <tuple>
 #include <unordered_map>
 #include <vector>
+#include <utility>
 
 namespace gdwg {
 template <typename N, typename E>
 class Graph {
  private:
-  
   struct Edge;
-  
+
   // Functor to compare two edges
   struct edge_compare {
-    bool operator() (const std::shared_ptr<Edge> edge1, const std::shared_ptr<Edge> edge2) const {
-      
+    bool operator()(const std::shared_ptr<Edge> edge1, const std::shared_ptr<Edge> edge2) const {
       // Compare the source nodes
       std::shared_ptr<Node> edge1_src = edge1->src_.lock();
       std::shared_ptr<Node> edge2_src = edge2->src_.lock();
       if (edge1_src->value_ != edge2_src->value_) {
         return (edge1_src->value_ < edge2_src->value_);
-        
-      // Compare the destination nodes
+
+        // Compare the destination nodes
       } else {
         std::shared_ptr<Node> edge1_dst = edge1->dst_.lock();
         std::shared_ptr<Node> edge2_dst = edge2->dst_.lock();
         if (edge1_dst->value_ != edge2_dst->value_) {
           return (edge1_dst->value_ < edge2_dst->value_);
-          
-        // Compares the edge weights
+
+          // Compares the edge weights
         } else {
           return (edge1->weight_ < edge2->weight_);
         }
       }
     }
   };
-  
+
   // Node class
   struct Node {
-
     // Node constructor
-    Node(const N& val) : value_{val} {}
+    explicit Node(const N& val) : value_{val} {}
 
     // Checks if a given edge (destination and weight) exists from this node
     std::shared_ptr<Edge> GetEdgeDst(const N& dst, const E& w) const noexcept {
@@ -68,11 +67,10 @@ class Graph {
 
   // Edge class
   struct Edge {
-
     // Edge constructor
     Edge(std::shared_ptr<Node> src, std::shared_ptr<Node> dst, const E& w)
       : src_{src}, dst_{dst}, weight_{w} {}
-    
+
     // Return the source node's value
     N GetSrcValue() const {
       std::shared_ptr<Node> p = src_.lock();
@@ -93,301 +91,274 @@ class Graph {
 
   // Map containing all the nodes in the graph
   std::map<N, std::shared_ptr<Node>> node_graph_;
-  
+
   // Const iterator
   class const_iterator {
-   
    public:
-    
     using iterator_category = std::bidirectional_iterator_tag;
     using value_type = std::tuple<N, N, E>;
     using reference = std::tuple<const N&, const N&, const E&>;
-    
+
     // De-referencing iterator
     reference operator*() const {
-        auto curr_edge = *edge_ite_;
-        auto node_src = curr_edge->src_.lock();
-        auto node_dst = curr_edge->dst_.lock();
-        return {node_src->value_, node_dst->value_, curr_edge->weight_};
+      auto curr_edge = *edge_ite_;
+      auto node_src = curr_edge->src_.lock();
+      auto node_dst = curr_edge->dst_.lock();
+      return {node_src->value_, node_dst->value_, curr_edge->weight_};
     }
-    
+
     // Pre-increment
     const_iterator operator++() {
-        ++edge_ite_;
-        if (edge_ite_ == node_ite_->second->out_edges_.end()) {
-          
-          // Iterate to next node while skipping nodes with no edges and not reaching the end
-          do {
-            node_ite_++;
-          } while (node_ite_ != end_sentinel_ && node_ite_->second->out_edges_.begin() == node_ite_->second->out_edges_.end());
-          if (node_ite_ != end_sentinel_) {
-            edge_ite_ = node_ite_->second->out_edges_.begin();
-          }
+      ++edge_ite_;
+      if (edge_ite_ == node_ite_->second->out_edges_.end()) {
+        // Iterate to next node while skipping nodes with no edges and not reaching the end
+        do {
+          node_ite_++;
+        } while (node_ite_ != end_sentinel_ &&
+                 node_ite_->second->out_edges_.begin() == node_ite_->second->out_edges_.end());
+        if (node_ite_ != end_sentinel_) {
+          edge_ite_ = node_ite_->second->out_edges_.begin();
         }
-        return *this;
+      }
+      return *this;
     }
-    
+
     // Post-increment
     const_iterator operator++(int) {
-        auto copy{*this};
-        ++(*this);
-        return copy;
+      auto copy{*this};
+      ++(*this);
+      return copy;
     }
-    
+
     // Pre-decrement
     const_iterator operator--() {
-        
-        // At node_graph_.end() case + edge_ite_.begin() case
-        if (node_ite_ == end_sentinel_ || edge_ite_ == node_ite_->second->out_edges_.begin()) {
-            do {
-                node_ite_--;
-            } while (node_ite_ != begin_sentinel_ && node_ite_->second->out_edges_.begin() == node_ite_->second->out_edges_.end());
-            edge_ite_ = --(node_ite_->second->out_edges_.end());
-            
+      // At node_graph_.end() case + edge_ite_.begin() case
+      if (node_ite_ == end_sentinel_ || edge_ite_ == node_ite_->second->out_edges_.begin()) {
+        do {
+          node_ite_--;
+        } while (node_ite_ != begin_sentinel_ &&
+                 node_ite_->second->out_edges_.begin() == node_ite_->second->out_edges_.end());
+        edge_ite_ = --(node_ite_->second->out_edges_.end());
+
         // Otherwise move edge back by one
-        } else {
-            edge_ite_--;
-        }
-        return *this;
+      } else {
+        edge_ite_--;
+      }
+      return *this;
     }
-    
+
     // Post-decrement
     const_iterator operator--(int) {
-        auto copy{*this};
-        --(*this);
-        return copy;
+      auto copy{*this};
+      --(*this);
+      return copy;
     }
-    
+
     // == operator
     friend bool operator==(const const_iterator& edge1, const const_iterator& edge2) {
-        // Check that both outer and inner iterators are the same
-        if (edge1.node_ite_ == edge2.node_ite_) {
-            
-            // Check special case where outer iterator is at end()
-            if (edge1.edge_ite_ == edge2.edge_ite_ || edge1.node_ite_ == edge1.end_sentinel_) {
-                return true;
-            }
+      // Check that both outer and inner iterators are the same
+      if (edge1.node_ite_ == edge2.node_ite_) {
+        // Check special case where outer iterator is at end()
+        if (edge1.edge_ite_ == edge2.edge_ite_ || edge1.node_ite_ == edge1.end_sentinel_) {
+          return true;
         }
-        return false;
+      }
+      return false;
     }
-    
+
     // != operator
     friend bool operator!=(const const_iterator& edge1, const const_iterator& edge2) {
-        return !(edge1 == edge2);
+      return !(edge1 == edge2);
     }
-    
+
    private:
-    
     // Iterators
     typename std::map<N, std::shared_ptr<Node>>::const_iterator node_ite_;
     const typename std::map<N, std::shared_ptr<Node>>::const_iterator end_sentinel_;
     const typename std::map<N, std::shared_ptr<Node>>::const_iterator begin_sentinel_;
     typename std::set<std::shared_ptr<Edge>, edge_compare>::const_iterator edge_ite_;
 
-    
     friend class Graph;
-    
+
     // Iterator constructor
     const_iterator(const decltype(node_ite_) node_ite,
                    const decltype(end_sentinel_) end_sentinel,
                    const decltype(begin_sentinel_) begin_sentinel,
-                   const decltype(edge_ite_) edge_ite):
-                   node_ite_{node_ite},
-                   end_sentinel_{end_sentinel},
-                   begin_sentinel_{begin_sentinel},
-                   edge_ite_{edge_ite} {}
-             
-    
+                   const decltype(edge_ite_) edge_ite)
+      : node_ite_{node_ite}, end_sentinel_{end_sentinel},
+        begin_sentinel_{begin_sentinel}, edge_ite_{edge_ite} {}
   };
-  
+
   // Const reverse iterator
   class const_reverse_iterator {
-   
    public:
-    
     using iterator_category = std::bidirectional_iterator_tag;
     using value_type = std::tuple<N, N, E>;
     using reference = std::tuple<const N&, const N&, const E&>;
-    
+
     // De-referencing iterator
     reference operator*() const {
-        auto curr_edge = *edge_ite_;
-        auto node_src = curr_edge->src_.lock();
-        auto node_dst = curr_edge->dst_.lock();
-        return {node_src->value_, node_dst->value_, curr_edge->weight_};
+      auto curr_edge = *edge_ite_;
+      auto node_src = curr_edge->src_.lock();
+      auto node_dst = curr_edge->dst_.lock();
+      return {node_src->value_, node_dst->value_, curr_edge->weight_};
     }
-    
+
     // Pre-increment
     const_reverse_iterator operator++() {
-        ++edge_ite_;
-        if (edge_ite_ == node_ite_->second->out_edges_.rend()) {
-          
-          // Iterate to next node while skipping nodes with no edges and not reaching the end
-          do {
-            node_ite_++;
-          } while (node_ite_ != end_sentinel_ && node_ite_->second->out_edges_.rbegin() == node_ite_->second->out_edges_.rend());
-          if (node_ite_ != end_sentinel_) {
-            edge_ite_ = node_ite_->second->out_edges_.rbegin();
-          }
+      ++edge_ite_;
+      if (edge_ite_ == node_ite_->second->out_edges_.rend()) {
+        // Iterate to next node while skipping nodes with no edges and not reaching the end
+        do {
+          node_ite_++;
+        } while (node_ite_ != end_sentinel_ &&
+                 node_ite_->second->out_edges_.rbegin() == node_ite_->second->out_edges_.rend());
+        if (node_ite_ != end_sentinel_) {
+          edge_ite_ = node_ite_->second->out_edges_.rbegin();
         }
-        return *this;
+      }
+      return *this;
     }
-    
+
     // Post-increment
     const_reverse_iterator operator++(int) {
-        auto copy{*this};
-        ++(*this);
-        return copy;
+      auto copy{*this};
+      ++(*this);
+      return copy;
     }
-    
+
     // Pre-decrement
     const_reverse_iterator operator--() {
-        
-        // At node_graph_.end() case + edge_ite_.begin() case
-        if (node_ite_ == end_sentinel_ || edge_ite_ == node_ite_->second->out_edges_.rbegin()) {
-            do {
-                node_ite_--;
-            } while (node_ite_ != begin_sentinel_ && node_ite_->second->out_edges_.rbegin() == node_ite_->second->out_edges_.rend());
-            edge_ite_ = --(node_ite_->second->out_edges_.rend());
-            
+      // At node_graph_.end() case + edge_ite_.begin() case
+      if (node_ite_ == end_sentinel_ || edge_ite_ == node_ite_->second->out_edges_.rbegin()) {
+        do {
+          node_ite_--;
+        } while (node_ite_ != begin_sentinel_ &&
+                 node_ite_->second->out_edges_.rbegin() == node_ite_->second->out_edges_.rend());
+        edge_ite_ = --(node_ite_->second->out_edges_.rend());
+
         // Otherwise move edge back by one
-        } else {
-            edge_ite_--;
-        }
-        return *this;
+      } else {
+        edge_ite_--;
+      }
+      return *this;
     }
-    
+
     // Post-decrement
     const_reverse_iterator operator--(int) {
-        auto copy{*this};
-        --(*this);
-        return copy;
+      auto copy{*this};
+      --(*this);
+      return copy;
     }
-    
+
     // == operator
-    friend bool operator==(const const_reverse_iterator& edge1, const const_reverse_iterator& edge2) {
-        // Check that both outer and inner iterators are the same
-        if (edge1.node_ite_ == edge2.node_ite_) {
-            
-            // Check special case where outer iterator is at end()
-            if (edge1.edge_ite_ == edge2.edge_ite_ || edge1.node_ite_ == edge1.end_sentinel_) {
-                return true;
-            }
+    friend bool operator==(const const_reverse_iterator& edge1,
+                           const const_reverse_iterator& edge2) {
+      // Check that both outer and inner iterators are the same
+      if (edge1.node_ite_ == edge2.node_ite_) {
+        // Check special case where outer iterator is at end()
+        if (edge1.edge_ite_ == edge2.edge_ite_ || edge1.node_ite_ == edge1.end_sentinel_) {
+          return true;
         }
-        return false;
+      }
+      return false;
     }
-    
+
     // != operator
-    friend bool operator!=(const const_reverse_iterator& edge1, const const_reverse_iterator& edge2) {
-        return !(edge1 == edge2);
+    friend bool operator!=(const const_reverse_iterator& edge1,
+                           const const_reverse_iterator& edge2) {
+      return !(edge1 == edge2);
     }
-    
+
    private:
-    
     // Iterators
     typename std::map<N, std::shared_ptr<Node>>::const_reverse_iterator node_ite_;
     const typename std::map<N, std::shared_ptr<Node>>::const_reverse_iterator end_sentinel_;
     const typename std::map<N, std::shared_ptr<Node>>::const_reverse_iterator begin_sentinel_;
     typename std::set<std::shared_ptr<Edge>, edge_compare>::const_reverse_iterator edge_ite_;
 
-    
     friend class Graph;
-    
+
     // Iterator constructor
     const_reverse_iterator(const decltype(node_ite_) node_ite,
-                   const decltype(end_sentinel_) end_sentinel,
-                   const decltype(begin_sentinel_) begin_sentinel,
-                   const decltype(edge_ite_) edge_ite):
-                   node_ite_{node_ite},
-                   end_sentinel_{end_sentinel},
-                   begin_sentinel_{begin_sentinel},
-                   edge_ite_{edge_ite} {}
-             
-    
+                           const decltype(end_sentinel_) end_sentinel,
+                           const decltype(begin_sentinel_) begin_sentinel,
+                           const decltype(edge_ite_) edge_ite)
+      : node_ite_{node_ite}, end_sentinel_{end_sentinel},
+        begin_sentinel_{begin_sentinel}, edge_ite_{edge_ite} {}
   };
-  
+
  public:
-  
   // Const begin()
   const_iterator cbegin() const {
-      
-      // Case where graph has no nodes
-      auto node_ite = node_graph_.begin();
-      if (node_ite == node_graph_.end()) {
-        return cend();
-      }
-  
-      // Iterate until a node with edges is found...
-      while (node_ite != node_graph_.end() && node_ite->second->out_edges_.begin() == node_ite->second->out_edges_.end()) {
-        node_ite++;
-      }
-      
-      // Case where graph has nodes but no edges
-      if (node_ite == node_graph_.end()) {
-        return cend();
-      }
-      
-      // Return starting iterator
-      return const_iterator{node_ite, node_graph_.end(), node_graph_.begin(), node_ite->second->out_edges_.begin()};
+    // Case where graph has no nodes
+    auto node_ite = node_graph_.begin();
+    if (node_ite == node_graph_.end()) {
+      return cend();
+    }
+
+    // Iterate until a node with edges is found...
+    while (node_ite != node_graph_.end() &&
+           node_ite->second->out_edges_.begin() == node_ite->second->out_edges_.end()) {
+      node_ite++;
+    }
+
+    // Case where graph has nodes but no edges
+    if (node_ite == node_graph_.end()) {
+      return cend();
+    }
+
+    // Return starting iterator
+    return const_iterator{node_ite, node_graph_.end(), node_graph_.begin(),
+                          node_ite->second->out_edges_.begin()};
   }
-  
+
   // Const end()
   const_iterator cend() const {
-      return const_iterator(node_graph_.end(), node_graph_.end(), node_graph_.begin(), {});
+    return const_iterator(node_graph_.end(), node_graph_.end(), node_graph_.begin(), {});
   }
-  
+
   // Const reverse begin()
   const_reverse_iterator crbegin() const {
-      
-      auto node_ite = node_graph_.rbegin();
-      
-      // Case where graph has no nodes
-      if (node_ite == node_graph_.rend()) {
-        return crend();
-      }
-      
-      // Iterate until a node with edges is found...
-      while (node_ite != node_graph_.rend() && node_ite->second->out_edges_.rbegin() == node_ite->second->out_edges_.rend()) {
-          node_ite++;
-      }
-      
-      // Graph with nodes but no edges case
-      if (node_ite == node_graph_.rend()) {
-          return crend();
-      }
-      
-      return const_reverse_iterator(node_ite, node_graph_.rend(), node_graph_.rbegin(), node_ite->second->out_edges_.rbegin());
+    auto node_ite = node_graph_.rbegin();
+
+    // Case where graph has no nodes
+    if (node_ite == node_graph_.rend()) {
+      return crend();
+    }
+
+    // Iterate until a node with edges is found...
+    while (node_ite != node_graph_.rend() &&
+           node_ite->second->out_edges_.rbegin() == node_ite->second->out_edges_.rend()) {
+      node_ite++;
+    }
+
+    // Graph with nodes but no edges case
+    if (node_ite == node_graph_.rend()) {
+      return crend();
+    }
+
+    return const_reverse_iterator(node_ite, node_graph_.rend(), node_graph_.rbegin(),
+                                  node_ite->second->out_edges_.rbegin());
   }
-  
+
   // Const reverse end()
   const_reverse_iterator crend() const {
-      return const_reverse_iterator(node_graph_.rend(), node_graph_.rend(), node_graph_.rbegin(), {});
+    return const_reverse_iterator(node_graph_.rend(), node_graph_.rend(), node_graph_.rbegin(), {});
   }
-  
+
   // Begin()
-  const_iterator begin() const {
-      return cbegin();
-  }
-  
+  const_iterator begin() const { return cbegin(); }
+
   // End()
-  const_iterator end() const {
-      return cend();
-  }
-  
+  const_iterator end() const { return cend(); }
+
   // Reverse begin()
-  const_reverse_iterator rbegin() const {
-      return crbegin();
-  }
-  
+  const_reverse_iterator rbegin() const { return crbegin(); }
+
   // Reverse end()
-  const_reverse_iterator rend() const {
-      return crend();
-  }
-  
-  
-  
-  
-  
+  const_reverse_iterator rend() const { return crend(); }
+
   //============================================================
   // Constructors
   //============================================================
@@ -417,13 +388,13 @@ class Graph {
   //============================================================
   // Operations
   //============================================================
-  
+
   // Copy assignment
   Graph<N, E>& operator=(const Graph<N, E>& orig) noexcept;
-  
+
   // Move assignment
   Graph<N, E>& operator=(Graph<N, E>&& orig) noexcept;
-  
+
   //============================================================
   // Methods
   //============================================================
@@ -463,8 +434,7 @@ class Graph {
 
   // Returns first edge in the graph (based on iterator order)
   std::shared_ptr<Edge> GetFirstEdge() const noexcept;
-  
-  
+
   //============================================================
   // Friends
   //============================================================
@@ -472,7 +442,6 @@ class Graph {
   // Operator overwrite to print out the stream
   friend std::ostream& operator<<(std::ostream& out_stream,
                                   const gdwg::Graph<N, E>& curr_graph) noexcept {
-      
     // Iterate over nodes
     for (auto element : curr_graph.node_graph_) {
       out_stream << element.first << " (\n";
@@ -495,7 +464,6 @@ class Graph {
   // Compares if two graphs are the same or not
   friend bool operator==(const gdwg::Graph<N, E>& graph1,
                          const gdwg::Graph<N, E>& graph2) noexcept {
-
     // Check if maps are the same size
     if (graph1.node_graph_.size() != graph2.node_graph_.size()) {
       return false;
@@ -504,7 +472,6 @@ class Graph {
     // Iterate through graph1's nodes and compare their name values with graph2's nodes
     for (auto g1_node_ite = graph1.node_graph_.cbegin(); g1_node_ite != graph1.node_graph_.cend();
          g1_node_ite++) {
-
       // Try and find a node in graph2 with the same name value
       auto g2_node_ite = graph2.node_graph_.find(g1_node_ite->first);
 
@@ -583,7 +550,6 @@ class Graph {
   // Compares if two graphs are not the same or are
   friend bool operator!=(const gdwg::Graph<N, E>& graph1,
                          const gdwg::Graph<N, E>& graph2) noexcept {
-
     // Use the friend operator== and just negate the value
     return !(graph1 == graph2);
   }
@@ -592,7 +558,7 @@ class Graph {
 }  // namespace gdwg
 
 // Change this back to absolute path, only for IDE
-//#include "assignments/dg/graph.tpp"
+// #include "assignments/dg/graph.tpp"
 #include "graph.tpp"
 
 #endif  // ASSIGNMENTS_DG_GRAPH_H_
