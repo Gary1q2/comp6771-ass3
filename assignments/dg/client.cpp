@@ -7,7 +7,22 @@
 #include "graph.h"
 
 int main(){
-    gdwg::Graph<int, int> g;
+    gdwg::Graph<int, int> g{1, 2, 3, 4, 5, 6};
+    g.InsertEdge(1, 5, -1);
+    g.InsertEdge(2, 1, 1);
+    g.InsertEdge(2, 4, 2);
+    g.InsertEdge(3, 2, -8);
+    g.InsertEdge(3, 2, 2);
+    g.InsertEdge(4, 1, -4);
+    g.InsertEdge(4, 5, 3);
+    g.InsertEdge(5, 2, 7);
+    g.InsertEdge(6, 2, 5);
+    g.InsertEdge(6, 3, 10);
+    
+   for (auto omg = g.crbegin(); omg != g.crend(); omg++) {
+        std::cout << std::get<0>(*omg) << "-" << std::get<1>(*omg) << "-" << std::get<2>(*omg) << "\n";
+    }
+    
 /*
     gdwg::Graph<int, int> g;
     g.InsertNode(1);

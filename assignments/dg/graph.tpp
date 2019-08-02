@@ -397,14 +397,8 @@ std::vector<N> gdwg::Graph<N, E>::GetConnected(const N& src) const {
   if (!IsNode(src)) {
     throw std::out_of_range("Cannot call Graph::GetConnected if src doesn't exist in the graph");
   }
-
-  // Iterate through each inward edge on source node and append the other connected node
+  
   std::set<N> result_set;
-  for (auto ite = node_graph_.at(src)->in_edges_.cbegin();
-       ite != node_graph_.at(src)->in_edges_.cend(); ite++) {
-    auto edge = *ite;
-    result_set.insert(edge->GetSrcValue());
-  }
 
   // Iterate through each outward edge on source node and append the destination node
   for (auto ite = node_graph_.at(src)->out_edges_.cbegin();
@@ -430,18 +424,8 @@ std::vector<E> gdwg::Graph<N, E>::GetWeights(const N& src, const N& dst) const {
     throw std::out_of_range(
         "Cannot call Graph::GetWeights if src or dst node don't exist in the graph");
   }
-
-  // Iterate through source node's in_edge_ array and look for edges that connect to dst node
+  
   std::vector<E> result_vec;
-  for (auto ite = node_graph_.at(src)->in_edges_.cbegin();
-       ite != node_graph_.at(src)->in_edges_.cend(); ite++) {
-    auto edge = *ite;
-
-    // Edge connects to dst node so append it to the set
-    if (edge->GetSrcValue() == dst) {
-      result_vec.insert(result_vec.begin(), edge->weight_);
-    }
-  }
 
   // Iterate through source node's out_edge_ array and look for edges that connect to dst node
   for (auto ite = node_graph_.at(src)->out_edges_.cbegin();

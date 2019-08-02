@@ -1159,8 +1159,8 @@ SCENARIO("Testing GetConnected()") {
     gdwg::Graph<std::string, int> graph{"hi", "bye"};
     graph.InsertEdge("bye", "hi", 2);
     WHEN("GetConnected() called on hi node (checking in_edge)") {
-      THEN("Return vector of size 1") {
-        std::vector<std::string> res{"bye"};
+      THEN("Return vector of size 0") {
+        std::vector<std::string> res;
         REQUIRE(graph.GetConnected("hi") == res);
       }
     }
@@ -1207,6 +1207,18 @@ SCENARIO("Testing GetConnected()") {
       }
     }
   }
+  GIVEN("A graph with 4 nodes and 3 edges") {
+    gdwg::Graph<std::string, int> graph{"lol", "hi", "pop", "bye"};
+    graph.InsertEdge("hi", "bye", 3);
+    graph.InsertEdge("lol", "hi", 3);
+    graph.InsertEdge("hi", "pop", 3);
+    WHEN("GetConnected() called on hi node") {
+      THEN("Return vector of size 2 (checking only outward edges returned") {
+        std::vector<std::string> res{"bye", "pop"};
+        REQUIRE(graph.GetConnected("hi") == res);
+      }
+    }
+  }
   GIVEN("A graph with 0 nodes") {
     gdwg::Graph<std::string, int> graph;
     WHEN("GetConnected() called on non-existent node") {
@@ -1232,8 +1244,8 @@ SCENARIO("Testing GetWeights()") {
     gdwg::Graph<std::string, int> graph{"hi", "bye"};
     graph.InsertEdge("bye", "hi", 3);
     WHEN("GetWeights() is called") {
-      THEN("Vector of size 1 is returned (checking in_edge)") {
-        std::vector<int> res{3};
+      THEN("Vector of size 0 is returned (checking in_edge)") {
+        std::vector<int> res;
         REQUIRE(graph.GetWeights("hi", "bye") == res);
       }
     }
@@ -1253,21 +1265,19 @@ SCENARIO("Testing GetWeights()") {
     graph.InsertEdge("hi", "bye", 3);
     graph.InsertEdge("bye", "hi", 3);
     WHEN("GetWeights() is called") {
-      THEN("Vector of size 2 is returned (checking duplicate edges is allowed)") {
-        std::vector<int> res{3, 3};
+      THEN("Vector of size 1 is returned (only outward edge allowed)") {
+        std::vector<int> res{3};
         REQUIRE(graph.GetWeights("hi", "bye") == res);
       }
     }
   }
-  GIVEN("Graph with 2 nodes and 4 edges") {
+  GIVEN("Graph with 2 nodes and 2 edges") {
     gdwg::Graph<std::string, int> graph{"hi", "bye"};
     graph.InsertEdge("hi", "bye", 5);
     graph.InsertEdge("hi", "bye", 3);
-    graph.InsertEdge("bye", "hi", 6);
-    graph.InsertEdge("bye", "hi", 3);
     WHEN("GetWeights() is called") {
-      THEN("Vector of size 4 is returned (checking the vector is ordered)") {
-        std::vector<int> res{3, 3, 5, 6};
+      THEN("Vector of size 2 is returned (checking the vector is ordered)") {
+        std::vector<int> res{3, 5};
         REQUIRE(graph.GetWeights("hi", "bye") == res);
       }
     }
@@ -1400,7 +1410,7 @@ SCENARIO("Testing iterator operator ==/!=") {
     }
 }
 
-SCENARIO("Testing iterator deferencing, ++/-- ") {
+SCENARIO("Testing const iterator deferencing, ++/-- ") {
     GIVEN("A graph with 1 node and 1 edge") {
         gdwg::Graph<int, int> graph;
         graph.InsertNode(1);
@@ -1519,6 +1529,162 @@ SCENARIO("Testing begin() & end()") {
     
 }
 
+SCENARIO("Testing crbegin() && crend()") {
+    GIVEN("An empty graph") {
+        gdwg::Graph<int, int> graph;
+        auto ite1 = graph.crbegin();
+        auto ite2 = graph.crend();
+        REQUIRE(ite1 == ite2);
+    }
+    
+    GIVEN("A graph with 1 node") {
+        gdwg::Graph<int, int> graph;
+        graph.InsertNode(1);
+        auto ite1 = graph.crbegin();
+        auto ite2 = graph.crend();
+        REQUIRE(ite1 == ite2);
+    }
+    GIVEN("A graph with 1 node and 1 edge") {
+        gdwg::Graph<int, int> graph;
+        graph.InsertNode(1);
+        graph.InsertEdge(1, 1, 1);
+        auto ite1 = graph.crbegin();
+        auto ite2 = --graph.crend();
+        REQUIRE(*ite1 == std::tuple(1, 1, 1));
+        REQUIRE(*ite2 == std::tuple(1, 1, 1));
+    }
+    GIVEN("A graph with 2 nodes and 2 edges") {
+        gdwg::Graph<int, int> graph;
+        graph.InsertNode(1);
+        graph.InsertNode(2);
+        graph.InsertEdge(1, 1, 1);
+        graph.InsertEdge(2, 1, 5);
+        auto ite1 = graph.crbegin();
+        auto ite2 = --graph.crend();
+        REQUIRE(*ite1 == std::tuple(2, 1, 5));
+        REQUIRE(*ite2 == std::tuple(1, 1, 1));
+    }
+}
+
+SCENARIO("Testing reverse iterator deferencing, ++/-- ") {
+    GIVEN("A graph with 1 node and 1 edge") {
+        gdwg::Graph<int, int> graph;
+        graph.InsertNode(1);
+        graph.InsertEdge(1, 1, 1);
+        THEN("Testing deferencing & ++/--") {
+            auto ite1 = graph.crbegin();
+            REQUIRE((*ite1) == std::make_tuple(1, 1, 1));
+            
+            auto ite2 = graph.crend();
+            REQUIRE(ite1 != ite2);
+            REQUIRE((ite1 == ite2) == false);
+            
+            ++ite1;
+            REQUIRE(ite1 == ite2);
+            --ite1;
+            REQUIRE(ite1 != ite2);
+            REQUIRE((ite1 == ite2) == false);
+            REQUIRE((*ite1) == std::make_tuple(1, 1, 1));
+            ite1++;
+            REQUIRE(ite1 == ite2);
+            ite1--;
+            REQUIRE(ite1 != ite2);
+            REQUIRE((ite1 == ite2) == false);
+            REQUIRE((*ite1) == std::make_tuple(1, 1, 1));
+        }
+    }
+    GIVEN("A graph with 2 node and 3 edges") {
+        gdwg::Graph<int, int> graph;
+        graph.InsertNode(1);
+        graph.InsertNode(2);
+        graph.InsertEdge(1, 1, 1);
+        graph.InsertEdge(1, 1, 3);
+        graph.InsertEdge(1, 2, 4);
+        THEN("Testing deferencing and ++/--") {
+            auto ite = graph.crbegin();
+            REQUIRE((*ite) == std::make_tuple(1, 2, 4));
+            ++ite;
+            REQUIRE((*ite) == std::make_tuple(1, 1, 3));
+            --ite;
+            REQUIRE((*ite) == std::make_tuple(1, 2, 4));
+            ite++;
+            REQUIRE((*ite) == std::make_tuple(1, 1, 3));
+            ite++;
+            REQUIRE((*ite) == std::make_tuple(1, 1, 1));
+            ite--;
+            REQUIRE((*ite) == std::make_tuple(1, 1, 3));
+            ite++;
+            REQUIRE((*ite) == std::make_tuple(1, 1, 1));
+            ++ite;
+            
+            auto end = graph.crend();
+            REQUIRE(ite == end);
+            
+            ite--;
+            REQUIRE((*ite) == std::make_tuple(1, 1, 1));
+            --ite;
+            REQUIRE((*ite) == std::make_tuple(1, 1, 3));
+            --ite;
+            REQUIRE((*ite) == std::make_tuple(1, 2, 4));
+            
+            auto begin = graph.crbegin();
+            REQUIRE(ite == begin);
+            
+            for (auto omg = graph.crbegin(); omg != graph.crend(); omg++) {
+                std::cout << std::get<0>(*omg) << "-" << std::get<1>(*omg) << "-" << std::get<2>(*omg) << "\n";
+            }
+            auto fk = graph.crbegin();
+            std::cout << std::get<0>(*fk) << "-" << std::get<1>(*fk) << "-" << std::get<2>(*fk) << "\n";
+            fk++;
+            std::cout << std::get<0>(*fk) << "-" << std::get<1>(*fk) << "-" << std::get<2>(*fk) << "\n";
+            fk++;
+            std::cout << std::get<0>(*fk) << "-" << std::get<1>(*fk) << "-" << std::get<2>(*fk) << "\n";
+        }
+    }
+}
+
+
+SCENARIO("Testing rbegin() & rend()") {
+    GIVEN("An empty graph") {
+        gdwg::Graph<int, int> graph;
+        auto ite1 = graph.rbegin();
+        auto ite2 = graph.rend();
+        REQUIRE(ite1 == ite2);
+    }
+    GIVEN("A graph with 1 node") {
+        gdwg::Graph<int, int> graph;
+        graph.InsertNode(1);
+        auto ite1 = graph.rbegin();
+        auto ite2 = graph.rend();
+        REQUIRE(ite1 == ite2);
+    }
+    GIVEN("A graph with 1 node and 1 edge") {
+        gdwg::Graph<int, int> graph;
+        graph.InsertNode(1);
+        graph.InsertEdge(1, 1, 1);
+        auto ite1 = graph.rbegin();
+        auto ite2 = --graph.rend();
+        REQUIRE(*ite1 == std::tuple(1, 1, 1));
+        REQUIRE(*ite2 == std::tuple(1, 1, 1));
+        
+    }
+    GIVEN("A graph with 2 nodes and 2 edges") {
+        gdwg::Graph<int, int> graph;
+        graph.InsertNode(1);
+        graph.InsertNode(2);
+        graph.InsertEdge(1, 1, 1);
+        graph.InsertEdge(2, 1, 5);
+        auto ite1 = graph.rbegin();
+        auto ite2 = --graph.rend();
+        REQUIRE(*ite1 == std::tuple(2, 1, 5));
+        REQUIRE(*ite2 == std::tuple(1, 1, 1));
+        
+        for (auto omg = graph.rbegin(); omg != graph.rend(); omg++) {
+            std::cout << std::get<0>(*omg) << "-" << std::get<1>(*omg) << "-" << std::get<2>(*omg) << "\n";
+        }
+    }
+    
+}
 
 //============================================================
 // Friends
