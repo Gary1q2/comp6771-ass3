@@ -9,8 +9,8 @@
 #include <set>
 #include <tuple>
 #include <unordered_map>
-#include <vector>
 #include <utility>
+#include <vector>
 
 namespace gdwg {
 template <typename N, typename E>
@@ -42,7 +42,9 @@ class Graph {
     }
   };
 
-  // Node class
+  /*******************************************************************************
+   *                                 Node class
+   *******************************************************************************/
   struct Node {
     // Node constructor
     explicit Node(const N& val) : value_{val} {}
@@ -65,6 +67,9 @@ class Graph {
     std::set<std::shared_ptr<Edge>, edge_compare> out_edges_;  // Edges that go AWAY from this node
   };
 
+  /*******************************************************************************
+   *                                 Edge class
+   *******************************************************************************/
   // Edge class
   struct Edge {
     // Edge constructor
@@ -92,7 +97,9 @@ class Graph {
   // Map containing all the nodes in the graph
   std::map<N, std::shared_ptr<Node>> node_graph_;
 
-  // Const iterator
+  /*******************************************************************************
+   *                            Const iterator class
+   *******************************************************************************/
   class const_iterator {
    public:
     using iterator_category = std::bidirectional_iterator_tag;
@@ -189,7 +196,9 @@ class Graph {
         begin_sentinel_{begin_sentinel}, edge_ite_{edge_ite} {}
   };
 
-  // Const reverse iterator
+  /*******************************************************************************
+   *                          Const reverse iterator Class
+   *******************************************************************************/
   class const_reverse_iterator {
    public:
     using iterator_category = std::bidirectional_iterator_tag;
@@ -288,6 +297,9 @@ class Graph {
         begin_sentinel_{begin_sentinel}, edge_ite_{edge_ite} {}
   };
 
+  /*******************************************************************************
+   *                         Public Iterator Methods
+   *******************************************************************************/
  public:
   // Const begin()
   const_iterator cbegin() const {
@@ -358,6 +370,31 @@ class Graph {
 
   // Reverse end()
   const_reverse_iterator rend() const { return crend(); }
+
+  const_iterator find(const N& node1, const N& node2, const E& weight) {
+    if (!IsNode(node1) || !IsNode(node2)) {
+      return cend();
+    }
+    std::shared_ptr<Node> curr_node1 = this->node_graph_.at(node1);
+    std::shared_ptr<Node> curr_node2 = this->node_graph_.at(node2);
+    std::shared_ptr<Edge> curr_edge1 = curr_node1->GetEdgeDst(node2, weight);
+    if (curr_edge1 == nullptr) {
+      return cend();
+    }
+    std::shared_ptr<Edge> curr_edge2 = curr_node2->GetEdgeDst(node1, weight);
+    if (curr_edge2 == nullptr) {
+      return cend();
+    }
+    if (curr_edge1 != curr_edge2) {
+      return cend();
+    }
+
+    return const_iterator{curr_node1, this->node_graph_.end(), this->node_graph_.begin(), curr_edge1};
+  };
+
+  /*******************************************************************************
+   *                              Graph Methods
+   *******************************************************************************/
 
   //============================================================
   // Constructors

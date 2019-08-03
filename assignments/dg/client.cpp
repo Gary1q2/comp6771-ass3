@@ -18,11 +18,9 @@ int main(){
     g.InsertEdge(5, 2, 7);
     g.InsertEdge(6, 2, 5);
     g.InsertEdge(6, 3, 10);
-    
-   for (auto omg = g.crbegin(); omg != g.crend(); omg++) {
-        std::cout << std::get<0>(*omg) << "-" << std::get<1>(*omg) << "-" << std::get<2>(*omg) << "\n";
-    }
-    
+    g.find(1,5,-1);
+
+
 /*
     gdwg::Graph<int, int> g;
     g.InsertNode(1);
