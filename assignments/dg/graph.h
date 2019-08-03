@@ -371,27 +371,51 @@ class Graph {
   // Reverse end()
   const_reverse_iterator rend() const { return crend(); }
 
-  const_iterator find(const N& node1, const N& node2, const E& weight) {
-    if (!IsNode(node1) || !IsNode(node2)) {
+  const_iterator find(const N& src, const N& dst, const E& weight) {
+    if (!IsNode(src) || !IsNode(dst)) {
       return cend();
     }
-    std::shared_ptr<Node> curr_node1 = this->node_graph_.at(node1);
-    std::shared_ptr<Node> curr_node2 = this->node_graph_.at(node2);
-    std::shared_ptr<Edge> curr_edge1 = curr_node1->GetEdgeDst(node2, weight);
-    if (curr_edge1 == nullptr) {
-      return cend();
-    }
-    std::shared_ptr<Edge> curr_edge2 = curr_node2->GetEdgeDst(node1, weight);
-    if (curr_edge2 == nullptr) {
-      return cend();
-    }
-    if (curr_edge1 != curr_edge2) {
+    std::shared_ptr<Node> src_node = this->node_graph_.at(src);
+    std::shared_ptr<Node> dst_node = this->node_graph_.at(dst);
+    std::shared_ptr<Edge> edge = src_node->GetEdgeDst(dst, weight);
+
+    if (edge == nullptr) {
       return cend();
     }
 
-    return const_iterator{curr_node1, this->node_graph_.end(), this->node_graph_.begin(), curr_edge1};
-  };
+    return const_iterator{this->node_graph_.find(src), this->node_graph_.end(),
+                          this->node_graph_.begin(), src_node->out_edges_.find(edge)};
+  }
 
+  bool erase(const N& src, const N& dst, const E& weight) {
+    if (!IsNode(src) || !IsNode(dst)) {
+      return false;
+    }
+    const_iterator edge_ite = this->find(src, dst, weight);
+    if (edge_ite == this->cend()) {
+      return false;
+    }
+    std::shared_ptr<Node> src_Node = this->node_graph_.at(std::get<0>(*edge_ite));
+    std::shared_ptr<Node> dst_Node = this->node_graph_.at(std::get<1>(*edge_ite));
+    E w = std::get<2>(*edge_ite);
+
+    auto it2 = src_Node->out_edges_.begin();
+    for (; it2 != src_Node->out_edges_.end(); it2++) {
+      if ((*it2)->src_.lock() == src_Node && (*it2)->dst_.lock() == dst_Node &&
+          (*it2)->weight_ == w) {
+        break;
+      }
+    }
+    src_Node->out_edges_.erase(it2);
+    auto it = dst_Node->in_edges_.begin();
+    for (; it != dst_Node->in_edges_.end(); it++) {
+      if ((*it)->src_.lock() == src_Node && (*it)->dst_.lock() == dst_Node && (*it)->weight_ == w) {
+        break;
+      }
+    }
+    dst_Node->in_edges_.erase(it);
+    return true;
+  }
   /*******************************************************************************
    *                              Graph Methods
    *******************************************************************************/
@@ -495,6 +519,7 @@ class Graph {
       }
       out_stream << ")\n";
     }
+
     return out_stream;
   }
 
@@ -503,6 +528,7 @@ class Graph {
                          const gdwg::Graph<N, E>& graph2) noexcept {
     // Check if maps are the same size
     if (graph1.node_graph_.size() != graph2.node_graph_.size()) {
+
       return false;
     }
 
@@ -514,6 +540,7 @@ class Graph {
 
       // Same node didn't exist in graph2, so return false
       if (g2_node_ite == graph2.node_graph_.end()) {
+
         return false;
       }
 
@@ -523,11 +550,13 @@ class Graph {
 
       // Check if the node's inward edge array has the same size
       if (g1_node->in_edges_.size() != g2_node->in_edges_.size()) {
+
         return false;
       }
 
       // Check if the node's outward edge array has the same size
       if (g1_node->out_edges_.size() != g2_node->out_edges_.size()) {
+
         return false;
       }
 
@@ -552,6 +581,7 @@ class Graph {
 
         // An edge in node1 was not found in node2 so return false
         if (!found) {
+
           return false;
         }
       }
@@ -577,6 +607,7 @@ class Graph {
 
         // An edge in node1 was not found in node2 so return false
         if (!found) {
+
           return false;
         }
       }
@@ -590,7 +621,7 @@ class Graph {
     // Use the friend operator== and just negate the value
     return !(graph1 == graph2);
   }
-};
+};  // namespace gdwg
 
 }  // namespace gdwg
 

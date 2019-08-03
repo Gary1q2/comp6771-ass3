@@ -195,8 +195,16 @@ bool gdwg::Graph<N, E>::DeleteNode(const N& my_node) noexcept {
           if (dst_Node == curr_Node) {
             if (src_Node->out_edges_.count(curr_edge) != 0)
               src_Node->out_edges_.erase(curr_edge);
-            // if (dst_Node->in_edges_.count(curr_edge) != 0)
-            // dst_Node->in_edges_.erase(curr_edge);
+            if (dst_Node->in_edges_.count(curr_edge) != 0) {
+              // dst_Node->in_edges_.erase(curr_edge);
+              auto it = dst_Node->in_edges_.begin();
+              for (; it != dst_Node->in_edges_.end(); it++) {
+                if (*it == curr_edge) {
+                  break;
+                }
+              }
+              dst_Node->in_edges_.erase(it);
+            }
           }
         }
       } catch (std::bad_weak_ptr& b) {
@@ -216,8 +224,16 @@ bool gdwg::Graph<N, E>::DeleteNode(const N& my_node) noexcept {
           if (src_Node == curr_Node) {
             if (dst_Node->in_edges_.count(curr_edge) != 0)
               dst_Node->in_edges_.erase(curr_edge);
-            // if (src_Node->out_edges_.count(curr_edge) != 0)
-            // src_Node->out_edges_.erase(curr_edge);
+            if (src_Node->out_edges_.count(curr_edge) != 0) {
+              // src_Node->out_edges_.erase(curr_edge);
+              auto it2 = src_Node->out_edges_.begin();
+              for (; it2 != src_Node->out_edges_.end(); it2++) {
+                if (*it2 == curr_edge) {
+                  break;
+                }
+              }
+              src_Node->out_edges_.erase(it2);
+            }
           }
         }
       } catch (std::bad_weak_ptr& b) {

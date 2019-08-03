@@ -19,8 +19,8 @@
 #include <sstream>
 #include <string>
 #include <tuple>
-#include <vector>
 #include <utility>
+#include <vector>
 
 #include "catch.h"
 #include "graph.h"
@@ -1305,6 +1305,28 @@ SCENARIO("Testing GetWeights()") {
         REQUIRE_THROWS_WITH(
             graph.GetWeights("hi", "lol"),
             "Cannot call Graph::GetWeights if src or dst node don't exist in the graph");
+      }
+    }
+  }
+}
+
+SCENARIO("Test find function") {
+  GIVEN("Empty graph") {
+    gdwg::Graph<std::string, int> graph;
+    WHEN("Find() is called") {
+      THEN("Graph.Cend is returned") { REQUIRE(graph.find("a", "b", 7) == graph.cend()); }
+    }
+  }
+  GIVEN("Graph has only 2 node") {
+    gdwg::Graph<std::string, int> graph{"hi", "bye"};
+    graph.InsertEdge("hi", "bye", 3);
+    graph.InsertEdge("hi", "hi", 10);
+    graph.InsertEdge("bye", "hi", 3);
+    WHEN("Find() is called") {
+      THEN("Tuple {hi,bye,3} is returned") {
+        REQUIRE(*graph.find("hi", "bye", 3) == std::tuple("hi", "bye", 3));
+        REQUIRE(graph.find("hi", "hi", 3) == graph.cend());
+        REQUIRE(*graph.find("hi", "hi", 10) == std::tuple("hi", "hi", 10));
       }
     }
   }
