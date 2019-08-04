@@ -365,12 +365,14 @@ class Graph {
     return true;
   }
   const_iterator erase(const_iterator it) {
+    const_iterator it_rec = it;
     if (it == cend() || it == end()) {
       return this->end();
     }
     if (this->node_graph_.empty()) {
       return this->end();
     }
+    it_rec++;
     std::shared_ptr<Node> src_Node = this->node_graph_.at(std::get<0>(*it));
     std::shared_ptr<Node> dst_Node = this->node_graph_.at(std::get<1>(*it));
     E w = std::get<2>(*it);
@@ -386,10 +388,8 @@ class Graph {
       return this->end();
     }
     if (it != this->cend()) {
-      const_iterator it_rec = it;
-      it_rec++;
-      std::cout << std::get<0>(*it_rec) << " -> " << std::get<1>(*it_rec) << " "
-                << std::get<2>(*it_rec) << std::endl;
+      // std::cout << std::get<0>(*it_rec) << " -> " << std::get<1>(*it_rec) << " "
+      //            << std::get<2>(*it_rec) << std::endl;
       return (it_rec);
     } else {
       return (this->end());
@@ -557,6 +557,6 @@ class Graph {
 };  // namespace gdwg
 }  // namespace gdwg
 // Change this back to absolute path, only for IDE
-//#include "assignments/dg/graph.tpp"
-#include "graph.tpp"
+#include "assignments/dg/graph.tpp"
+
 #endif  // ASSIGNMENTS_DG_GRAPH_H_

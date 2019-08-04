@@ -1390,7 +1390,7 @@ SCENARIO("Test erase_iter function") {
     WHEN("erase() is called") {
       THEN("Edge is remove") {
         REQUIRE(graph.erase(graph.find("hi", "hi", 1)) == graph.end());
-        REQUIRE(graph.erase(graph.find("hi", "hi", 10)) == graph.find("hi", "bye", 3));
+        REQUIRE(graph.erase(graph.find("hi", "hi", 10)) == graph.find("hi", "hi", 12));
         REQUIRE(ans == graph);
       }
     }
@@ -1416,7 +1416,13 @@ SCENARIO("Test erase_iter function") {
     WHEN("erase() is called") {
       THEN("Edge is remove") {
         REQUIRE(graph.erase(graph.find(1, 1, 1)) == graph.end());
-        REQUIRE(graph.erase(graph.find(1, 1, 13)) == graph.find(1, 1, 12));
+        REQUIRE(graph.erase(graph.find(1, 1, 13)) == graph.find(1, 2, 3));
+        REQUIRE(ans == graph);
+        REQUIRE(graph.erase(graph.find(2, 2, 4)) == graph.end());
+        ans.erase(2, 2, 4);
+        REQUIRE(ans == graph);
+        REQUIRE(graph.erase(graph.find(1, 1, 12)) == graph.find(1, 2, 3));
+        ans.erase(1, 1, 12);
         REQUIRE(ans == graph);
       }
     }

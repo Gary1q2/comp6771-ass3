@@ -23,11 +23,11 @@ int main() {
   gdwg::Graph<std::string, int> ans3{"hi", "bye"};
 
   graph.erase(graph.find("hi", "hi", 1));
-  std::cout << graph;
+
   if (graph.erase(graph.find("hi", "hi", 10)) == graph.find("hi", "hi", 12)) {
     std::cout << "True\n";
   }
-  std::cout << graph;
+
   if (ans == graph) {
     std::cout << "ans == graph\n";
   }
