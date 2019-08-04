@@ -1,3 +1,13 @@
+#include <algorithm>
+#include <iostream>
+#include <map>
+#include <memory>
+#include <set>
+#include <tuple>
+#include <unordered_map>
+#include <utility>
+#include <vector>
+
 /* Constructor that takes in a vector of nodes
  */
 template <typename N, typename E>

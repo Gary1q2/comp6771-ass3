@@ -14,7 +14,7 @@
 */
 
 // Change this back to absolute path, only for IDE
-// #include "assignments/dg/graph.h"
+#include "assignments/dg/graph.h"
 
 #include <sstream>
 #include <string>
@@ -23,7 +23,6 @@
 #include <vector>
 
 #include "catch.h"
-#include "graph.h"
 
 //============================================================
 // Constructors
@@ -1331,7 +1330,98 @@ SCENARIO("Test find function") {
     }
   }
 }
-
+SCENARIO("Test erase function") {
+  GIVEN("Empty graph") {
+    gdwg::Graph<std::string, int> graph;
+    WHEN("erase() is called") {
+      THEN("False return is returned") { REQUIRE(graph.erase("a", "b", 7) == false); }
+    }
+  }
+  GIVEN("Graph has only 2 node") {
+    gdwg::Graph<std::string, int> graph{"hi", "bye"};
+    graph.InsertEdge("hi", "bye", 3);
+    graph.InsertEdge("hi", "hi", 10);
+    graph.InsertEdge("hi", "hi", 12);
+    graph.InsertEdge("bye", "hi", 3);
+    gdwg::Graph<std::string, int> ans{"hi", "bye"};
+    ans.InsertEdge("hi", "bye", 3);
+    ans.InsertEdge("hi", "hi", 12);
+    ans.InsertEdge("bye", "hi", 3);
+    gdwg::Graph<std::string, int> ans2{"hi", "bye"};
+    ans2.InsertEdge("hi", "hi", 12);
+    ans2.InsertEdge("bye", "hi", 3);
+    gdwg::Graph<std::string, int> ans3{"hi", "bye"};
+    WHEN("erase() is called") {
+      THEN("Edge is remove") {
+        REQUIRE(graph.erase("hi", "hi", 1) == false);
+        REQUIRE(graph.erase("hi", "hi", 10) == true);
+        REQUIRE(ans == graph);
+        REQUIRE(graph.erase("hi", "bye", 3) == true);
+        REQUIRE(ans2 == graph);
+        REQUIRE(graph.erase("hi", "hi", 12) == true);
+        REQUIRE(graph.erase("bye", "hi", 3) == true);
+        REQUIRE(ans3 == graph);
+      }
+    }
+  }
+}
+SCENARIO("Test erase_iter function") {
+  GIVEN("Empty graph") {
+    gdwg::Graph<std::string, int> graph;
+    WHEN("erase() is called") {
+      auto it = graph.find("e", "i", 8);
+      THEN("end() return is returned") { REQUIRE(graph.erase(it) == graph.end()); }
+    }
+  }
+  GIVEN("Graph has only 2 node") {
+    gdwg::Graph<std::string, int> graph{"hi", "bye"};
+    graph.InsertEdge("hi", "bye", 3);
+    graph.InsertEdge("hi", "hi", 10);
+    graph.InsertEdge("hi", "hi", 12);
+    graph.InsertEdge("bye", "hi", 3);
+    gdwg::Graph<std::string, int> ans{"hi", "bye"};
+    ans.InsertEdge("hi", "bye", 3);
+    ans.InsertEdge("hi", "hi", 12);
+    ans.InsertEdge("bye", "hi", 3);
+    gdwg::Graph<std::string, int> ans2{"hi", "bye"};
+    ans2.InsertEdge("hi", "hi", 12);
+    ans2.InsertEdge("bye", "hi", 3);
+    gdwg::Graph<std::string, int> ans3{"hi", "bye"};
+    WHEN("erase() is called") {
+      THEN("Edge is remove") {
+        REQUIRE(graph.erase(graph.find("hi", "hi", 1)) == graph.end());
+        REQUIRE(graph.erase(graph.find("hi", "hi", 10)) == graph.find("hi", "bye", 3));
+        REQUIRE(ans == graph);
+      }
+    }
+  }
+  GIVEN("Graph has only 2 node") {
+    gdwg::Graph<int, int> graph{1, 2};
+    graph.InsertEdge(1, 1, 12);
+    graph.InsertEdge(1, 1, 13);
+    graph.InsertEdge(1, 2, 3);
+    graph.InsertEdge(1, 2, 4);
+    graph.InsertEdge(2, 1, 3);
+    graph.InsertEdge(2, 1, 4);
+    graph.InsertEdge(2, 2, 3);
+    graph.InsertEdge(2, 2, 4);
+    gdwg::Graph<int, int> ans{1, 2};
+    ans.InsertEdge(1, 1, 12);
+    ans.InsertEdge(1, 2, 3);
+    ans.InsertEdge(1, 2, 4);
+    ans.InsertEdge(2, 1, 3);
+    ans.InsertEdge(2, 1, 4);
+    ans.InsertEdge(2, 2, 3);
+    ans.InsertEdge(2, 2, 4);
+    WHEN("erase() is called") {
+      THEN("Edge is remove") {
+        REQUIRE(graph.erase(graph.find(1, 1, 1)) == graph.end());
+        REQUIRE(graph.erase(graph.find(1, 1, 13)) == graph.find(1, 1, 12));
+        REQUIRE(ans == graph);
+      }
+    }
+  }
+}
 SCENARIO(
     "Making sure cbegin() & cend() before anything else (but we have to assume deferencing works") {
   GIVEN("An empty graph") {
@@ -1498,17 +1588,6 @@ SCENARIO("Testing const iterator deferencing, ++/-- ") {
 
       auto begin = graph.cbegin();
       REQUIRE(ite == begin);
-
-      for (auto omg = graph.cbegin(); omg != graph.cend(); omg++) {
-        std::cout << std::get<0>(*omg) << "-" << std::get<1>(*omg) << "-" << std::get<2>(*omg)
-                  << "\n";
-      }
-      auto fk = graph.cbegin();
-      std::cout << std::get<0>(*fk) << "-" << std::get<1>(*fk) << "-" << std::get<2>(*fk) << "\n";
-      fk++;
-      std::cout << std::get<0>(*fk) << "-" << std::get<1>(*fk) << "-" << std::get<2>(*fk) << "\n";
-      fk++;
-      std::cout << std::get<0>(*fk) << "-" << std::get<1>(*fk) << "-" << std::get<2>(*fk) << "\n";
     }
   }
 }
@@ -1546,11 +1625,6 @@ SCENARIO("Testing begin() & end()") {
     auto ite2 = --graph.end();
     REQUIRE(*ite1 == std::tuple(1, 1, 1));
     REQUIRE(*ite2 == std::tuple(2, 1, 5));
-
-    for (auto omg = graph.begin(); omg != graph.end(); omg++) {
-      std::cout << std::get<0>(*omg) << "-" << std::get<1>(*omg) << "-" << std::get<2>(*omg)
-                << "\n";
-    }
   }
 }
 
@@ -1654,17 +1728,6 @@ SCENARIO("Testing reverse iterator deferencing, ++/-- ") {
 
       auto begin = graph.crbegin();
       REQUIRE(ite == begin);
-
-      for (auto omg = graph.crbegin(); omg != graph.crend(); omg++) {
-        std::cout << std::get<0>(*omg) << "-" << std::get<1>(*omg) << "-" << std::get<2>(*omg)
-                  << "\n";
-      }
-      auto fk = graph.crbegin();
-      std::cout << std::get<0>(*fk) << "-" << std::get<1>(*fk) << "-" << std::get<2>(*fk) << "\n";
-      fk++;
-      std::cout << std::get<0>(*fk) << "-" << std::get<1>(*fk) << "-" << std::get<2>(*fk) << "\n";
-      fk++;
-      std::cout << std::get<0>(*fk) << "-" << std::get<1>(*fk) << "-" << std::get<2>(*fk) << "\n";
     }
   }
 }
@@ -1702,11 +1765,6 @@ SCENARIO("Testing rbegin() & rend()") {
     auto ite2 = --graph.rend();
     REQUIRE(*ite1 == std::tuple(2, 1, 5));
     REQUIRE(*ite2 == std::tuple(1, 1, 1));
-
-    for (auto omg = graph.rbegin(); omg != graph.rend(); omg++) {
-      std::cout << std::get<0>(*omg) << "-" << std::get<1>(*omg) << "-" << std::get<2>(*omg)
-                << "\n";
-    }
   }
 }
 

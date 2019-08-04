@@ -8,35 +8,27 @@
 #include "graph.h"
 
 int main() {
-  gdwg::Graph<int, int> g{1, 2, 3, 4, 5, 6};
-  g.InsertEdge(1, 5, -1);
-  g.InsertEdge(2, 1, 1);
-  g.InsertEdge(2, 4, 2);
-  g.InsertEdge(3, 2, -8);
-  g.InsertEdge(3, 2, 2);
-  g.InsertEdge(4, 1, -4);
-  g.InsertEdge(4, 5, 3);
-  g.InsertEdge(5, 2, 7);
-  g.InsertEdge(6, 2, 5);
-  g.InsertEdge(6, 3, 10);
+  gdwg::Graph<std::string, int> graph{"hi", "bye"};
+  graph.InsertEdge("hi", "bye", 3);
+  graph.InsertEdge("hi", "hi", 10);
+  graph.InsertEdge("hi", "hi", 12);
+  graph.InsertEdge("bye", "hi", 3);
+  gdwg::Graph<std::string, int> ans{"hi", "bye"};
+  ans.InsertEdge("hi", "bye", 3);
+  ans.InsertEdge("hi", "hi", 12);
+  ans.InsertEdge("bye", "hi", 3);
+  gdwg::Graph<std::string, int> ans2{"hi", "bye"};
+  ans2.InsertEdge("hi", "hi", 12);
+  ans2.InsertEdge("bye", "hi", 3);
+  gdwg::Graph<std::string, int> ans3{"hi", "bye"};
 
-  gdwg::Graph<int, int> res{1, 2, 3, 4, 5, 6};
-  res.InsertEdge(2, 1, 1);
-  res.InsertEdge(2, 4, 2);
-  res.InsertEdge(3, 2, -8);
-  res.InsertEdge(3, 2, 2);
-  res.InsertEdge(4, 1, -4);
-  res.InsertEdge(4, 5, 3);
-  res.InsertEdge(5, 2, 7);
-  res.InsertEdge(6, 2, 5);
-  res.InsertEdge(6, 3, 10);
-  if (g.erase(1, 5, -1)==true){
+  graph.erase(graph.find("hi", "hi", 1));
+  std::cout << graph;
+  if (graph.erase(graph.find("hi", "hi", 10)) == graph.find("hi", "hi", 12)) {
     std::cout << "True\n";
   }
-  if (g==res){
-    std::cout << "True\n";
-  } else {
-    std::cout << g;
+  std::cout << graph;
+  if (ans == graph) {
+    std::cout << "ans == graph\n";
   }
-
 }
